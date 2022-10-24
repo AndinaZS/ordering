@@ -1,5 +1,4 @@
 from django.db import models
-
 from users.models import Company
 
 class Product(models.Model):
@@ -15,7 +14,7 @@ class Cathegory(models.Model):
 class Property(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
-class Value(models.Model):
+class PropertyValue(models.Model):
     property = models.ForeignKey(Property, related_name='values', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name='values', on_delete=models.CASCADE)
     value = models.CharField(max_length=50)
