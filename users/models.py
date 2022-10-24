@@ -85,6 +85,7 @@ class User(AbstractUser):
 class Company(models.Model):
     title = models.CharField(max_length=255)
     ITN = models.PositiveIntegerField(unique=True, db_index=True)
+    website = models.URLField(max_length=255, null=True, blank=True)
     ready_to_order = models.BooleanField(default=False)
 
     def __str__(self):
