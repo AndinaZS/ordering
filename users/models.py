@@ -97,7 +97,7 @@ class Company(models.Model):
         ordering = ('title',)
 
 
-class Contacts(models.Model):
+class Contact(models.Model):
     user = models.ForeignKey(User, related_name='contacts', blank=True,on_delete=models.CASCADE)
     postcode = models.IntegerField()
     region = models.CharField(max_length=15, blank=True)

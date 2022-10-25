@@ -21,6 +21,7 @@ class Order(models.Model):
     customer = models.ForeignKey(AUTH_USER_MODEL, related_name='orders', on_delete=models.CASCADE)
     comment = models.CharField(blank=True, null=True)
 
+
 class OrderState(models.Model):
     order = models.ForeignKey(Order, related_name='states', on_delete=models.CASCADE)
     state = models.ForeignKey(State, related_name='states', on_delete=models.CASCADE)
