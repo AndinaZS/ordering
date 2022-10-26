@@ -1,6 +1,14 @@
+import json
+
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import EmailMessage
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from rest_framework import serializers
 
 from users.models import Contact, User, Company
+
 
 
 class ContactSerializer(serializers.ModelSerializer):
@@ -18,12 +26,12 @@ class CompanySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     company = serializers.SlugRelatedField(
         required=False,
         queryset=Company.objects.all(),
-        slug_field='name'
+        slug_field='ITN'
     )
 
     class Meta:
@@ -31,17 +39,22 @@ class UserCreateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def is_valid(self, raise_exception=False):
-        self.company = self.initial_data.get('company')
         return super().is_valid(raise_exception=raise_exception)
-
     def create(self, validated_data):
         user = User.objects.create(**validated_data)
         user.set_password(validated_data['password'])
-        if self.company:
-            company = Company.objects.get_or_create(title=self.company['title'],
-                                                    ITN=self.company['ITN'],
-                                                    website=self.company.get['website'],
-                                                    ready_to_order=self.company.get['ready_to_order', False]
-                                                    )
         user.save()
+        self.send_token(user)
         return user
+    def send_token(self, user):
+        # current_site = get_current_site(request)
+        message = json.dumps({
+            'user': user.username,
+            #'domain': current_site.domain,
+            'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+            'token': default_token_generator.make_token(user)
+        })
+        mail_subject = 'Activate your blog account.'
+        email = EmailMessage(mail_subject, message, to=[user.email])
+        email.send()
+        return None

@@ -4,6 +4,7 @@ from products.models import Goods
 
 
 class State(models.Model):
+
     STATE_CHOICES = (
         ('basket', 'Статус корзины'),
         ('new', 'Новый'),
@@ -13,13 +14,13 @@ class State(models.Model):
         ('delivered', 'Доставлен'),
         ('canceled', 'Отменен'),
     )
-    state = models.Model(max_length=15, choices=STATE_CHOICES)
+    state = models.CharField(max_length=15, choices=STATE_CHOICES)
 
 
 class Order(models.Model):
     state = models.ManyToManyField(State, related_name='order', through='OrderState')
     customer = models.ForeignKey(AUTH_USER_MODEL, related_name='orders', on_delete=models.CASCADE)
-    comment = models.CharField(blank=True, null=True)
+    comment = models.CharField(max_length=255, blank=True, null=True)
 
 
 class OrderState(models.Model):
@@ -28,6 +29,6 @@ class OrderState(models.Model):
     state_beg = models.DateTimeField(auto_now_add=True)
     state_end = models.DateTimeField()
 
-class OrderedProduct:
+class OrderedProduct(models.Model):
     product = models.ForeignKey(Goods, on_delete=models.CASCADE)
     quantity = models.IntegerField()

@@ -3,9 +3,9 @@ from users.models import Company
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
-    description = models.CharField(null=True, blank=True)
+    description = models.CharField(max_length=255, null=True, blank=True)
     cathegories = models.ManyToManyField('Cathegory', related_name='products')
-    properties = models.ManyToManyField('Property', related_name='products', through='Value')
+    properties = models.ManyToManyField('Property', related_name='products', through='PropertyValue')
     companies = models.ManyToManyField(Company, related_name='products', through='Goods')
 
 class Cathegory(models.Model):
