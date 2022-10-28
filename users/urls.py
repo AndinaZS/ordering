@@ -1,7 +1,7 @@
-from django.urls import path
+from django.urls import path, include
 
-from users.views import UserCreateView
+from users.views import RegisterApiView
 
 urlpatterns = [
-    path('register/', UserCreateView.as_view())
+    path('register/', RegisterApiView.as_view())
 ]
