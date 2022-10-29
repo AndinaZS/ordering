@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.response import Response
 
 from users.models import Contact, User, Company
 
@@ -28,3 +29,4 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+
