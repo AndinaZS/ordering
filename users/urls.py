@@ -1,8 +1,8 @@
 from django.urls import path, include
 
-from users.views import RegisterApiView, VerifiedApiView
+from users.views import RegisterApiView
 
 urlpatterns = [
-    path('register/', RegisterApiView.as_view()),
-    path('confirm_email/', VerifiedApiView.as_view())
+    path('signup/', RegisterApiView.as_view(), name='authemail-signup'),
+    path('', include('authemail.urls')),
 ]
