@@ -21,6 +21,7 @@ class User(AbstractUser):
     company = models.ForeignKey('Company', related_name='user', default=None, null=True, on_delete=models.SET_NULL)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     type = models.CharField(choices=USER_TYPE_CHOICES, default='customer', max_length=9)
@@ -53,12 +54,12 @@ class Company(models.Model):
 
 
 class Contact(models.Model):
-    user = models.ForeignKey(User, related_name='contacts', blank=True,on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='contacts', blank=True, on_delete=models.CASCADE)
     postcode = models.IntegerField()
     region = models.CharField(max_length=15, blank=True)
     city = models.CharField(max_length=50)
     street = models.CharField(max_length=100)
-    building = models.CharField(max_length=15,)
+    building = models.CharField(max_length=5,)
     apartment = models.CharField(max_length=15, blank=True)
     additional_info = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=20)
@@ -67,5 +68,5 @@ class Contact(models.Model):
         verbose_name = 'Контакты пользователя'
         verbose_name_plural = "Список контактов пользователя"
 
-    def __str__(self):
-        return f'{self.city} {self.street} {self.building}'
+    # def __str__(self):
+    #     return f'{self.city} {self.street} {self.building}'
