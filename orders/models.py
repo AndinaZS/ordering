@@ -1,6 +1,6 @@
 from django.db import models
 from ordering.settings import AUTH_USER_MODEL
-from products.models import Goods
+from products.models import ProductOnSale
 
 
 class State(models.Model):
@@ -30,5 +30,5 @@ class OrderState(models.Model):
     state_end = models.DateTimeField()
 
 class OrderedProduct(models.Model):
-    product = models.ForeignKey(Goods, on_delete=models.CASCADE)
+    product = models.ForeignKey(ProductOnSale, on_delete=models.CASCADE)
     quantity = models.IntegerField()

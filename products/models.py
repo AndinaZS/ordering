@@ -6,7 +6,7 @@ class Product(models.Model):
     description = models.CharField(max_length=255, null=True, blank=True)
     cathegories = models.ManyToManyField('Cathegory', related_name='products')
     properties = models.ManyToManyField('Property', related_name='products', through='PropertyValue')
-    companies = models.ManyToManyField(Company, related_name='products', through='Goods')
+    companies = models.ManyToManyField(Company, related_name='products', through='ProductOnSale')
 
 class Cathegory(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -19,7 +19,7 @@ class PropertyValue(models.Model):
     product = models.ForeignKey(Product, related_name='values', on_delete=models.CASCADE)
     value = models.CharField(max_length=50)
 
-class Goods(models.Model):
+class ProductOnSale(models.Model):
     product = models.ForeignKey(Product, related_name='goods', on_delete=models.CASCADE)
     shop = models.ForeignKey(Company, related_name='goods', on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=9, decimal_places=2)
