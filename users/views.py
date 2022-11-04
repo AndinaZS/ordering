@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from users.models import Contact
+from users.permissions import IsOwnerOrReadOnly
 from users.serializers import UserSerializer, ContactSerializer
 
 
@@ -50,4 +51,6 @@ class ContactListCreateApiView(ListCreateAPIView):
 
 
 class ContactDetailUpdateDelApiView(RetrieveUpdateDestroyAPIView):
-    pass
+    serializer_class = ContactSerializer
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+    queryset = Contact.objects.all()
