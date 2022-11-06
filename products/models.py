@@ -4,18 +4,27 @@ from users.models import Company
 class Product(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=255, null=True, blank=True)
-    cathegories = models.ManyToManyField('Cathegory', related_name='products')
-    properties = models.ManyToManyField('Property', related_name='products', through='PropertyValue')
+    category = models.ForeignKey('Category',
+                                    related_name='products',
+                                    null=True, blank=True,
+                                    on_delete=models.SET_NULL)
+    parameters = models.ManyToManyField('Parameter', related_name='products', through='ParameterValue')
     companies = models.ManyToManyField(Company, related_name='products', through='ProductOnSale')
 
-class Cathegory(models.Model):
+class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
-class Property(models.Model):
+    def __str__(self):
+        return self.name
+
+class Parameter(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
-class PropertyValue(models.Model):
-    property = models.ForeignKey(Property, related_name='values', on_delete=models.CASCADE)
+    def __str__(self):
+        return self.name
+
+class ParameterValue(models.Model):
+    parameter = models.ForeignKey(Parameter, related_name='values', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name='values', on_delete=models.CASCADE)
     value = models.CharField(max_length=50)
 

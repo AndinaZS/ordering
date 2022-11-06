@@ -33,9 +33,10 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
     def create(self, validated_data):
-        contacts_data = validated_data.get('contacts', [])
-        user = User.objects.create(**validated_data)
-        user.set_password(validated_data['password'])
+        contacts_data = validated_data.pop('contacts') if validated_data.get('contacts') else []
+        password = validated_data.pop('password')
+        user = User(**validated_data)
+        user.set_password(password)
         user.save()
         for contact_data in contacts_data:
             Contact.objects.create(user=user, **contact_data)
