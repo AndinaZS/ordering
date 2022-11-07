@@ -24,15 +24,15 @@ class ProductCreateAPIView(APIView):
         categories = {c['id']: c['name'] for c in data['categories']}
         goods = data['goods']
         for good in goods:
-            parameters = [{"name":c[0], "value":c[1]} for c in good['parameters'].items()]
+            parameters = [{'name':c[0], 'value':c[1]} for c in good['parameters'].items()]
             serialized_data = {
-                "shop":shop.id,
-                "product":{
-                    "category":categories[good['category']],
-                    "name":good['name'],
-                    "parameters":parameters
+                'shop':shop.id,
+                'product':{
+                    'category':categories[good['category']],
+                    'name':good['name'],
+                    'parameters':parameters
                 },
-                "price":good['price'],
+                'price':good['price'],
                 'quantity':good['quantity']
             }
             serialiser_obj = self.serializer_class(data=serialized_data)
