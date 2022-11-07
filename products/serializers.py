@@ -8,7 +8,7 @@ class ProductPositionSerializer(serializers.ModelSerializer):
         fields = ['value']
 
 
-class ProductSerializer(serializers.ModelSerializer):
+class ProductCreateSerializer(serializers.ModelSerializer):
     parameters = serializers.SlugRelatedField(many=True,
                                               slug_field='name',
                                               read_only=True
@@ -20,43 +20,72 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ['name', 'parameters', 'category']
 
     def is_valid(self, raise_exception=False):
-        print(self.initial_data)
+
         self.parameters = self.initial_data.get('parameters', [])
         self.category = self.initial_data.get('category')
         return super().is_valid(raise_exception=raise_exception)
 
     def create(self, validated_data):
-        print(validated_data)
 
         product = super().create(validated_data)
         category, _ = Category.objects.get_or_create(name=self.category)
         product.category = category
+        product.save()
 
-        for position in self.parameters:
-            parameter, _ = Parameter.objects.get_or_create(name=position['parameter'])
-            ParameterValue.objects.create(parameter=parameter,
-                                        value=position['value'],
+
+        for parameter in self.parameters:
+            parameter_obj, _ = Parameter.objects.get_or_create(name=parameter['name'])
+            ParameterValue.objects.create(parameter=parameter_obj,
+                                        value=parameter['value'],
                                         product_id=product.id)
+
 
         return product
 
+class CompanySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Company
+        fields = ['title']
 
-# class ProductOnSaleSerializer(serializers.ModelSerializer):
-#
-#     shop = serializers.SlugRelatedField(
-#         required=True,
-#         queryset=Company.objects.all(),
-#         slug_field='ITN'
-#     )
-#     product = ProductSerializer(required=True)
-#
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['name']
+class GoodsSerializer(serializers.ModelSerializer):
+    shop = CompanySerializer()
+    class Meta:
+        model = ProductOnSale
+        exclude = ('product', )
+class ProductListSerializer(serializers.ModelSerializer):
+    goods = GoodsSerializer(many=True)
+    category = CategorySerializer()
+    values = ProductPositionSerializer(many=True)
+    class Meta:
+        model = Product
+        fields = ['name', 'category', 'values', 'goods']
+
+
+# class ProductListSerializer(serializers.ModelSerializer):
+#     product = ProductSerializer()
+#     shop = CompanySerializer()
 #     class Meta:
 #         model = ProductOnSale
 #         fields = '__all__'
-#
-#     def create(self, validated_data):
-#         product = validated_data.pop('product')
-#         good = super().create(validated_data)
-#         good.save()
-#         Product.objects.create(user=user, **contact_data)
-#         return good
+
+class GoodsCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductOnSale
+        fields = '__all__'
+    def is_valid(self, raise_exception=False):
+        if not Product.objects.filter(name=self.initial_data['product']['name']).first():
+            serialiser_obj = ProductCreateSerializer(data=self.initial_data['product'])
+            serialiser_obj.is_valid(raise_exception=True)
+            product = serialiser_obj.save()
+        else:
+            product = Product.objects.filter(name=self.initial_data['product']['name']).first()
+        self.initial_data['product'] = product.id
+        return super().is_valid(raise_exception=raise_exception)
+
+    def create(self, validated_data):
+        good = super().create(validated_data)
+        return good

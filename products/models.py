@@ -33,5 +33,5 @@ class ProductOnSale(models.Model):
     shop = models.ForeignKey(Company, related_name='goods', on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=9, decimal_places=2)
     quantity = models.IntegerField()
-    ext_id = models.IntegerField()
+    ext_id = models.IntegerField(null=True, blank=True)
 
