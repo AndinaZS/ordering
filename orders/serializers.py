@@ -30,3 +30,29 @@ class OrderSerializer(serializers.ModelSerializer):
 
         return order
 
+    def update(self, instance, validated_data):
+
+        # def is_valid(self, raise_exception=False):
+        #     self.positions = self.initial_data.get('positions', [])
+        #     return super().is_valid(raise_exception=raise_exception)
+        positions = validated_data.pop('positions')
+
+        order = super().update(instance, validated_data)
+
+        for position in positions:
+            product = order.positions.all()
+
+            if product:
+                if position['quantity'] == 0:
+                    product.delete()
+                else:
+                    product.update(quantity=position['quantity'])
+            else:
+                OrderPositions.objects.create(product=position['product'],
+                                            quantity=position['quantity'],
+                                            order=order)
+            order.save()
+        return order
+
+    # def partial_update(self, instance, validated_data):
+    #     pass
