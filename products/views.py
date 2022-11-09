@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from yaml import load, Loader
 
-from products.models import ProductOnSale, Product
+from products.models import Product
 from products.serializers import ProductListSerializer, GoodsCreateSerializer
 
 
@@ -16,7 +16,7 @@ class ProductListAPIView(ListAPIView):
 
 class ProductCreateAPIView(APIView):
     serializer_class = GoodsCreateSerializer
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         shop = self.request.user.company
         url = request.data.get('url')
         price = get(url).content

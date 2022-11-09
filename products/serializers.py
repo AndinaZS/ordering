@@ -14,7 +14,7 @@ class GoodsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductOnSale
-        exclude = ('product','id')
+        exclude = ['product','id']
 
 
 class ProductCreateSerializer(serializers.ModelSerializer):
