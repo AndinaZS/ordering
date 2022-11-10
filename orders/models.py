@@ -23,7 +23,7 @@ class Order(models.Model):
 
 class OrderPositions(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='position')
-    product = models.ForeignKey(ProductOnSale, on_delete=models.CASCADE, related_name='position')
+    good = models.ForeignKey(ProductOnSale, on_delete=models.CASCADE, related_name='position')
     quantity = models.PositiveIntegerField()
 
 

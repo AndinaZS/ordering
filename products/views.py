@@ -33,7 +33,7 @@ class ProductCreateAPIView(APIView):
                     'parameters':parameters
                 },
                 'price':good['price'],
-                'quantity':good['quantity']
+                'instock':good['quantity']
             }
             serialiser_obj = self.serializer_class(data=serialized_data)
             serialiser_obj.is_valid(raise_exception=True)

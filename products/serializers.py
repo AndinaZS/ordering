@@ -58,6 +58,7 @@ class ProductListSerializer(serializers.ModelSerializer):
         fields = ['name', 'category', 'values', 'goods']
 
 
+
 class GoodsCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductOnSale
