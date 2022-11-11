@@ -16,23 +16,20 @@ class OrderSerializer(serializers.ModelSerializer):
 
         positions = validated_data.pop('position')
 
-        order = super().create(validated_data)
+        order, _ = Order.objects.get_or_create(customer=validated_data['customer'], state='basket')
 
-        for position in positions:
-            OrderPositions.objects.create(good=position['good'],
-                                        quantity=position['quantity'],
-                                        order=order)
+        # order = super().create(validated_data)
 
-        return order
+        # for position in positions:
+        #     OrderPositions.objects.create(good=position['good'],
+        #                                 quantity=position['quantity'],
+        #                                 order=order)
 
-    def update(self, instance, validated_data):
-
-        positions = validated_data.pop('position')
-
-        order = super().update(instance, validated_data)
+        # return order
 
         for object in positions:
             product = order.position.filter(good=object['good'].id).first()
+            print(product)
 
             if product:
                 if object['quantity'] == 0:
@@ -44,6 +41,30 @@ class OrderSerializer(serializers.ModelSerializer):
                 OrderPositions.objects.create(good=object['good'],
                                             quantity=object['quantity'],
                                             order=order)
-            order.save()
         return order
+
+
+
+    # def update(self, instance, validated_data):
+    #
+    #     positions = validated_data.pop('position')
+    #
+    #     order = super().update(instance, validated_data)
+    #
+    #     for object in positions:
+    #         product = order.position.filter(good=object['good'].id).first()
+    #         print(product)
+    #
+    #         if product:
+    #             if object['quantity'] == 0:
+    #                 product.delete()
+    #             else:
+    #                 product.quantity = object['quantity']
+    #                 product.save()
+    #         else:
+    #             OrderPositions.objects.create(good=object['good'],
+    #                                         quantity=object['quantity'],
+    #                                         order=order)
+    #         order.save()
+    #     return order
 

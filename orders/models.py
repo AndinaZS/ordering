@@ -17,7 +17,7 @@ STATE_CHOICES = (
 class Order(models.Model):
     state = models.CharField(choices=STATE_CHOICES, max_length=14)
     customer = models.ForeignKey(AUTH_USER_MODEL, related_name='orders', on_delete=models.CASCADE)
-    contact = models.ForeignKey(Contact, related_name='orders', on_delete=models.CASCADE)
+    contact = models.ForeignKey(Contact, related_name='orders', on_delete=models.CASCADE, null=True, blank=True)
     comment = models.CharField(max_length=255, blank=True, null=True)
 
 
