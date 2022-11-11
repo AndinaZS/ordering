@@ -19,7 +19,7 @@ class Order(models.Model):
     customer = models.ForeignKey(AUTH_USER_MODEL, related_name='orders', on_delete=models.CASCADE)
     contact = models.ForeignKey(Contact, related_name='orders', on_delete=models.CASCADE)
     comment = models.CharField(max_length=255, blank=True, null=True)
-    positions = models.ManyToManyField(ProductOnSale, through='OrderPositions')
+
 
 class OrderPositions(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='position')
