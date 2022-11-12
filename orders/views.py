@@ -1,12 +1,14 @@
+from django.db.models import Prefetch, F, Q, Count
 from rest_framework import status
-from rest_framework.generics import ListCreateAPIView, CreateAPIView
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from orders.models import Order
+from orders.models import Order, OrderPositions
 from orders.scripts import send_order_message
-from orders.serializers import BasketSerializer, OrderSerializer
+from orders.serializers import BasketSerializer
 from users.models import Contact
+from django.db import connection
 
 
 class BasketView(ListCreateAPIView):
@@ -15,7 +17,7 @@ class BasketView(ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Order.objects.filter(customer=user).filter(state='basket')
+        return Order.objects.filter(customer=user, state='basket')
 
     def post(self, request, *args, **kwargs):
         user = self.request.user
@@ -35,9 +37,31 @@ class OrderView(APIView):
         item.contact = Contact.objects.get(pk=request.data['contact'])
         item.state = 'new'
         item.save()
-        seriliser = BasketSerializer(item)
+        serializer = BasketSerializer(item)
         send_order_message(self.request.user.email, item.id)
-        return Response(seriliser.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        if user.type == 'customer':
+            orders = Order.objects.filter(customer=self.request.user).exclude(state='basket')
+
+        else:
+            orders = Order.objects.prefetch_related(
+                Prefetch(
+                    "position",
+                    queryset=OrderPositions.objects.filter(
+                        good__shop=user.company).annotate(
+                        pcount=Count('good'))
+            )).exclude(state='basket')
+
+        # for o in orders:
+        #     print(o.pcount)
+
+        serializer = BasketSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 
 
 

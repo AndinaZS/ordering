@@ -1,19 +1,31 @@
 from rest_framework import serializers
 from orders.models import OrderPositions, Order
+from products.models import ProductOnSale
 from users.models import Contact
 
+class ProductOnSaleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductOnSale
+        fields = '__all__'
+
+class TotalField(serializers.Field):
+    def to_representation(self, value):
+        total = value.quantity * value.good.price
+        return total
 
 class OrderPositionsSerializer(serializers.ModelSerializer):
+    total = TotalField(source='*')
+    good = ProductOnSaleSerializer(read_only=True)
     class Meta:
         model = OrderPositions
-        fields = ['good', 'quantity']
+        fields = ['good', 'quantity', 'total']
 
 class BasketSerializer(serializers.ModelSerializer):
 
     position = OrderPositionsSerializer(many=True)
     class Meta:
         model = Order
-        fields = ['id', 'customer', 'position']
+        fields = ['id', 'customer', 'position', 'state']
 
     def create(self, validated_data):
 
