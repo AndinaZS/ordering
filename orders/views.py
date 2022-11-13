@@ -1,4 +1,4 @@
-from django.db.models import Prefetch, F, Q, Count
+from django.db.models import Prefetch, Count
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
@@ -8,7 +8,6 @@ from orders.models import Order, OrderPositions
 from orders.scripts import send_order_message
 from orders.serializers import BasketSerializer
 from users.models import Contact
-from django.db import connection
 
 
 class BasketView(ListCreateAPIView):
@@ -53,10 +52,7 @@ class OrderView(APIView):
                     queryset=OrderPositions.objects.filter(
                         good__shop=user.company).annotate(
                         pcount=Count('good'))
-            )).exclude(state='basket')
-
-        # for o in orders:
-        #     print(o.pcount)
+            )).exclude(state='basket').filter(position__good__shop=user.company)
 
         serializer = BasketSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
