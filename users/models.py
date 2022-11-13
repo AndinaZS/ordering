@@ -8,7 +8,6 @@ USER_TYPE_CHOICES = (
 
 class User(AbstractUser):
     username_validator = UnicodeUsernameValidator()
-
     username = models.CharField(max_length=30,
                                 unique=True,
                                 db_index=True,
@@ -16,6 +15,9 @@ class User(AbstractUser):
     email = models.EmailField(unique=True,
                               max_length=255,
                               db_index=True)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    password_confirmed = models.CharField(max_length=50, null=True, default=None)
     company = models.ForeignKey('Company', related_name='user', default=None, null=True, on_delete=models.SET_NULL)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -28,7 +30,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['username', ]
 
     def __str__(self):
-        return self.username
+        return f'{self.first_name} {self.last_name}'
 
     class Meta:
         verbose_name = "Пользователь"

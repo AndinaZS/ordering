@@ -1,6 +1,7 @@
 from authemail.models import SignupCode, send_multi_format_email
 from django.conf import settings
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -18,6 +19,8 @@ class RegisterApiView(APIView):
     serializer_class = UserSerializer
 
     def post(self, request):
+        if request.data['password'] != request.data['password_confirmed']:
+            return Response({'message': 'The entered passwords are different'}, status=status.HTTP_406_NOT_ACCEPTABLE)
         serializer_obj = self.serializer_class(data=request.data)
         serializer_obj.is_valid(raise_exception=True)
         user = serializer_obj.save()
@@ -36,26 +39,25 @@ class RegisterApiView(APIView):
             signup_code = SignupCode.objects.create_signup_code(user, ipaddr)
             signup_code.send_signup_email()
 
-        content = {'content': f'User {user.username} has created.'}
+        content = {'content': f'User {user.username} has been created.'}
         return Response(content, status=status.HTTP_201_CREATED)
 
 
 class UserDetailChangeAPIView(RetrieveUpdateDestroyAPIView):
-    pass
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    serializer_class = UserSerializer
+    def get_object(self):
+        obj = self.request.user
+        return obj
 
+    def delete(self, request, *args, **kwargs):
+        user = self.get_object()
+        user.is_active = False
+        user.save()
+        token = Token.objects.get(user=user)
+        token.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-# class ContactListCreateApiView(ListCreateAPIView):
-#     serializer_class = ContactSerializer
-#     permission_classes = [IsAuthenticated, ]
-#     queryset = Contact.objects.all()
-#
-#     def get(self, request, *args, **kwargs):
-#         super().get(request, *args, **kwargs)
-#         self.queryset = self.queryset.filter(user=request.user)
-#         return super().get(request, *args, **kwargs)
-#
-#     def perform_create(self, serializer):
-#         serializer.save(user=self.request.user)
 
 class ContactViewSet(ModelViewSet):
     serializer_class = ContactSerializer

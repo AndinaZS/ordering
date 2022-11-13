@@ -29,7 +29,6 @@ class CompanySerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(required=False)
 
     company = serializers.SlugRelatedField(
         required=False,
@@ -41,13 +40,17 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['username', 'email', 'first_name', 'last_name', 'type', 'company', 'contacts']
+
+    def is_valid(self, *, raise_exception=False):
+        self.password = self.initial_data.get('password')
+        return super().is_valid(raise_exception=raise_exception)
+
 
     def create(self, validated_data):
         contacts_data = validated_data.pop('contacts') if validated_data.get('contacts') else []
-        password = validated_data.pop('password')
         user = User(**validated_data)
-        user.set_password(password)
+        user.set_password(self.password)
         user.save()
         for contact_data in contacts_data:
             Contact.objects.create(user=user, **contact_data)

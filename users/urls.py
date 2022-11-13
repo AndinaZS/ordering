@@ -23,8 +23,8 @@ urlpatterns = [
     path('logout/', Logout.as_view()),
     path('password/reset/', PasswordReset.as_view()),
     path('password/reset/verify/', PasswordResetVerify.as_view()),
-    path('password/reset/verified/', PasswordResetVerified.as_view()),
-    path('user/me/', UserDetailChangeAPIView.as_view()),
+    # path('password/reset/verified/', PasswordResetVerified.as_view()),
+    path('users/me/', UserDetailChangeAPIView.as_view()),
     path('users/me/', include(contact.urls)),
     path('', include(company.urls)),
 
