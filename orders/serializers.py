@@ -1,69 +1,68 @@
+from abc import ABC
+
 from rest_framework import serializers
 from orders.models import OrderPositions, Order
 from products.models import ProductItem
 from users.models import Contact
 
-class ProductOnSaleSerializer(serializers.ModelSerializer):
+
+class ProductItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductItem
         fields = '__all__'
 
-class TotalField(serializers.Field):
-    def to_representation(self, value):
-        total = value.quantity * value.good.price
-        return total
 
 class OrderPositionsSerializer(serializers.ModelSerializer):
-    total = TotalField(source='*')
-    good = ProductOnSaleSerializer(read_only=True)
+    total = serializers.SerializerMethodField()
+    good = serializers.PrimaryKeyRelatedField(queryset=ProductItem.objects.all())
     class Meta:
         model = OrderPositions
         fields = ['good', 'quantity', 'total']
+    def get_total(self, obj):
+        return obj.quantity * obj.good.price
+
 
 class BasketSerializer(serializers.ModelSerializer):
 
-    position = OrderPositionsSerializer(many=True)
+    positions = OrderPositionsSerializer(many=True)
+
     class Meta:
         model = Order
-        fields = ['id', 'customer', 'position', 'state']
+        fields = ['id', 'customer', 'positions', 'state']
 
     def create(self, validated_data):
 
-        print(validated_data)
-
-        positions = validated_data.pop('position')
+        positions = validated_data.pop('positions')
 
         order, _ = Order.objects.get_or_create(customer=validated_data['customer'], state='basket')
 
-        for good_object in positions:
-            product = order.position.filter(good=good_object['good'].id).first()
+        for position in positions:
+
+            product = order.positions.filter(good=position['good']).first()
 
             if product:
-                if good_object['quantity'] == 0:
+                if position['quantity'] == 0:
                     product.delete()
                 else:
-                    product.quantity = good_object['quantity']
+                    product.quantity = position['quantity']
                     product.save()
             else:
-                OrderPositions.objects.create(good=good_object['good'],
-                                              quantity=good_object['quantity'],
+                OrderPositions.objects.create(good=position['good'],
+                                              quantity=position['quantity'],
                                               order=order)
         return order
 
 
-
 class OrderSerializer(serializers.ModelSerializer):
-    position = OrderPositionsSerializer(many=True)
+    positions = OrderPositionsSerializer(many=True)
+
     class Meta:
         model = Order
-        fields = ['id', 'customer', 'state', 'position', 'contact']
+        fields = ['id', 'customer', 'state', 'positions', 'contact', 'total']
 
     def update(self, instanse, validated_data):
-
         order, _ = Order.objects.get(customer=validated_data['customer'], state='basket')
-        order.cintact =  validated_data['contact']
+        order.cintact = validated_data['contact']
         order.state = 'new'
 
         return order
-
-

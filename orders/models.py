@@ -22,10 +22,14 @@ class Order(models.Model):
                                 null=True, blank=True, default=None)
     comment = models.CharField(max_length=255, blank=True, null=True)
 
+    class Meta:
+        verbose_name = 'Заказ'
+        verbose_name_plural = "Список заказов"
+
 
 class OrderPositions(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='position')
-    good = models.ForeignKey(ProductItem, on_delete=models.CASCADE, related_name='position')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='positions')
+    good = models.ForeignKey(ProductItem, on_delete=models.CASCADE, related_name='positions')
     quantity = models.PositiveIntegerField()
 
 

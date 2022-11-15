@@ -1,5 +1,4 @@
-# from django_filters.rest_framework import FilterSet
-from django_filters import FilterSet, RangeFilter, BaseInFilter, CharFilter
+from django_filters import FilterSet, RangeFilter, CharFilter
 from requests import get
 from yaml import load, Loader
 
