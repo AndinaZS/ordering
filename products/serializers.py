@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from products.models import Product, ParameterValue, ProductOnSale, Category, Parameter
+from products.models import Product, ParameterValue, ProductItem, Category, Parameter
 
 
 class ParameterValueSerializer(serializers.ModelSerializer):
@@ -13,7 +13,7 @@ class GoodsSerializer(serializers.ModelSerializer):
     shop = serializers.StringRelatedField()
 
     class Meta:
-        model = ProductOnSale
+        model = ProductItem
         exclude = ['product','id']
 
 
@@ -61,7 +61,7 @@ class ProductListSerializer(serializers.ModelSerializer):
 
 class GoodsCreateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ProductOnSale
+        model = ProductItem
         fields = '__all__'
 
     def is_valid(self, raise_exception=False):

@@ -1,6 +1,6 @@
 from django.db import models
 from ordering.settings import AUTH_USER_MODEL
-from products.models import ProductOnSale
+from products.models import ProductItem
 from users.models import Contact
 
 
@@ -25,7 +25,7 @@ class Order(models.Model):
 
 class OrderPositions(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='position')
-    good = models.ForeignKey(ProductOnSale, on_delete=models.CASCADE, related_name='position')
+    good = models.ForeignKey(ProductItem, on_delete=models.CASCADE, related_name='position')
     quantity = models.PositiveIntegerField()
 
 

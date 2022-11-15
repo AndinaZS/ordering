@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from orders.models import Order, OrderPositions
-from orders.scripts import send_order_message
+from orders.service import send_order_message
 from orders.serializers import BasketSerializer
 from users.models import Contact
 

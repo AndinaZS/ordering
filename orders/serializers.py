@@ -1,11 +1,11 @@
 from rest_framework import serializers
 from orders.models import OrderPositions, Order
-from products.models import ProductOnSale
+from products.models import ProductItem
 from users.models import Contact
 
 class ProductOnSaleSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ProductOnSale
+        model = ProductItem
         fields = '__all__'
 
 class TotalField(serializers.Field):
