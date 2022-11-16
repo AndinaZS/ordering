@@ -15,12 +15,16 @@ STATE_CHOICES = (
     )
 
 class Order(models.Model):
-    state = models.CharField(choices=STATE_CHOICES, max_length=14)
-    customer = models.ForeignKey(AUTH_USER_MODEL, related_name='orders', on_delete=models.CASCADE)
+    state = models.CharField(choices=STATE_CHOICES, max_length=14, verbose_name='Статус заказа')
+    customer = models.ForeignKey(AUTH_USER_MODEL,
+                                 related_name='orders',
+                                 on_delete=models.CASCADE,
+                                 verbose_name='Покупатель')
     contact = models.ForeignKey(Contact, related_name='orders',
                                 on_delete=models.CASCADE,
-                                null=True, blank=True, default=None)
-    comment = models.CharField(max_length=255, blank=True, null=True)
+                                null=True, blank=True, default=None,
+                                verbose_name='Адрес доставки')
+    comment = models.CharField(max_length=255, blank=True, null=True, verbose_name='Комментарий')
 
     class Meta:
         verbose_name = 'Заказ'
@@ -28,8 +32,12 @@ class Order(models.Model):
 
 
 class OrderPositions(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='positions')
-    good = models.ForeignKey(ProductItem, on_delete=models.CASCADE, related_name='positions')
-    quantity = models.PositiveIntegerField()
+    order = models.ForeignKey(Order, on_delete=models.CASCADE,
+                              related_name='positions',
+                              verbose_name='Заказ')
+    good = models.ForeignKey(ProductItem, on_delete=models.CASCADE,
+                             related_name='positions',
+                             verbose_name='Товар')
+    quantity = models.PositiveIntegerField(verbose_name='Количество')
 
 

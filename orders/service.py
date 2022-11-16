@@ -14,5 +14,6 @@ def false_positions(positions):
     res = []
     for position in positions:
         if position.quantity > position.good.instock:
+            print(position.quantity, position.good.instock)
             res.append(position.good.id)
     return res

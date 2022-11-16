@@ -53,16 +53,16 @@ class BasketSerializer(serializers.ModelSerializer):
         return order
 
 
-class OrderSerializer(serializers.ModelSerializer):
-    positions = OrderPositionsSerializer(many=True)
+# class OrderSerializer(serializers.ModelSerializer):
+#     positions = OrderPositionsSerializer(many=True)
+#
+#     class Meta:
+#         model = Order
+#         fields = ['id', 'customer', 'state', 'positions', 'contact']
 
-    class Meta:
-        model = Order
-        fields = ['id', 'customer', 'state', 'positions', 'contact', 'total']
-
-    def update(self, instanse, validated_data):
-        order, _ = Order.objects.get(customer=validated_data['customer'], state='basket')
-        order.cintact = validated_data['contact']
-        order.state = 'new'
-
-        return order
+    # def update(self, instanse, validated_data):
+    #     order, _ = Order.objects.get(customer=validated_data['customer'], state='basket')
+    #     order.cintact = validated_data['contact']
+    #     order.state = 'new'
+    #
+    #     return order

@@ -19,7 +19,7 @@ class RegisterApiView(APIView):
     serializer_class = UserSerializer
 
     def post(self, request):
-        if request.data['password'] != request.data['password_confirmed']:
+        if request.data['password'] != request.data.get('password_confirmed'):
             return Response({'message': 'The entered passwords are different'}, status=status.HTTP_406_NOT_ACCEPTABLE)
         serializer_obj = self.serializer_class(data=request.data)
         serializer_obj.is_valid(raise_exception=True)
@@ -68,6 +68,7 @@ class ContactViewSet(ModelViewSet):
         return queryset
 
     def create(self, request, *args, **kwargs):
+        print(request.data)
         user = self.request.user
         request.data['user'] = user.id
         return super().create(request, *args, **kwargs)

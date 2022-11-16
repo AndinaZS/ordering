@@ -42,12 +42,13 @@ class BasketView(ListCreateAPIView):
 
 class OrderView(APIView):
     permission_classes = (IsAuthenticated,)
+
     def post(self, request, *args, **kwargs):
         positions = list(Order.objects.get(customer=self.request.user, state='basket').positions.all())
         res = false_positions(positions)
-        print(res)
         if res:
-            return Response({'message':f'There are not enough goods id {res} in stock'}, status=status.HTTP_409_CONFLICT)
+            return Response({'message': f'There are not enough goods id {res} in stock'},
+                            status=status.HTTP_409_CONFLICT)
         request.data['positions'] = positions
         item = Order.objects.get(customer=self.request.user, state='basket')
         item.contact = Contact.objects.get(pk=request.data['contact'])
@@ -62,19 +63,15 @@ class OrderView(APIView):
         if user.type == 'customer':
             orders = Order.objects.filter(customer=self.request.user).exclude(state='basket')
 
+
         else:
             orders = Order.objects.prefetch_related(
                 Prefetch(
                     "positions",
                     queryset=OrderPositions.objects.prefetch_related('good').filter(
                         good__shop=user.company)
-            )).exclude(state='basket').filter(positions__good__shop=user.company)
+                )).exclude(state='basket').filter(positions__good__shop=user.company)
+            print(orders)
 
         serializer = BasketSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-
-
-
-
