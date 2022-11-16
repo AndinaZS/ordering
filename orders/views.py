@@ -12,6 +12,7 @@ from users.models import Contact
 
 
 class BasketView(ListCreateAPIView):
+    # класс для работы с корзиной
     serializer_class = BasketSerializer
     queryset = Order.objects.all()
     permission_classes = (IsAuthenticated,)
@@ -41,6 +42,7 @@ class BasketView(ListCreateAPIView):
 
 
 class OrderView(APIView):
+    #класс для работы с заказом. доступны только создание заказа и просмотр.
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
@@ -59,6 +61,7 @@ class OrderView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request, *args, **kwargs):
+        #отдаеет заказы в которых user является покупателем или продавцом(в этом случае фильтр по позициям)
         user = self.request.user
         if user.type == 'customer':
             orders = Order.objects.filter(customer=self.request.user).exclude(state='basket')

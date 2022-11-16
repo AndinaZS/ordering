@@ -11,6 +11,7 @@ from products.serializers import ProductListSerializer, GoodsCreateSerializer
 
 
 class ProductListAPIView(ListAPIView):
+    #только get, добавление товаров через загрузку прайса
     serializer_class = ProductListSerializer
     queryset = Product.objects.all()
     filter_backends = (DjangoFilterBackend, )
@@ -25,11 +26,12 @@ class ProductListAPIView(ListAPIView):
         return queryset
 
 class ProductCreateAPIView(APIView):
+    #обрабатывает загруженный прайс
     serializer_class = GoodsCreateSerializer
 
     def post(self, request):
         if not self.request.user.company or self.request.user.type != 'seller':
-            return Response({'message': 'only seller-type users can upload the price list'},
+            return Response({'message': 'Company and type "seller" are required to upload the price list'},
                             status=status.HTTP_403_FORBIDDEN)
 
         num = get_data(self.request, self.serializer_class)

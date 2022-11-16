@@ -6,6 +6,7 @@ from products.models import Product
 
 
 class ProductFilter(FilterSet):
+    #фильтр списка товаров по категории и по диапазону цены
     category = CharFilter(field_name='category__name', lookup_expr='icontains')
     price = RangeFilter(field_name='goods__price')
 
@@ -15,6 +16,7 @@ class ProductFilter(FilterSet):
 
 
 def get_data(request, serializer_class):
+    #обработка позиций товара из прайса
     shop = request.user.company
     url = request.data.get('url')
     price = get(url).content
