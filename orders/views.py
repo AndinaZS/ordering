@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from orders.models import Order, OrderPositions
 from orders.service import send_order_message, false_positions
-from orders.serializers import BasketSerializer
+from orders.serializers import BasketSerializer, BasketSerializer1, GoodSerializer1
 from users.models import Contact
 
 
@@ -23,7 +23,7 @@ class BasketView(ListCreateAPIView):
         return Order.objects.filter(customer=user, state='basket')
 
     @extend_schema(
-        request=BasketSerializer,
+        request=BasketSerializer1,
         responses=BasketSerializer,
         description="Creates an authenticated user's basket or updates if the basket exists",
         summary='Create basket'
@@ -35,7 +35,7 @@ class BasketView(ListCreateAPIView):
         return self.create(request, *args, **kwargs)
 
     @extend_schema(
-        request=BasketSerializer,
+        request=BasketSerializer1,
         responses=BasketSerializer,
         description="Update an authenticated user's basket",
         summary='Update basket'
@@ -44,6 +44,8 @@ class BasketView(ListCreateAPIView):
         return self.post(request, *args, **kwargs)
 
     @extend_schema(
+        request=BasketSerializer,
+        responses=BasketSerializer,
         description="Delete goods from basket",
         summary='Delete goods'
     )

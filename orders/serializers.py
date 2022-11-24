@@ -11,6 +11,13 @@ class ProductItemSerializer(serializers.ModelSerializer):
         model = ProductItem
         fields = '__all__'
 
+class GoodSerializer1(serializers.ModelSerializer):
+    positions = serializers.SlugRelatedField(many=True,
+                                             slug_field='id',
+                                             read_only=True)
+    class Meta:
+        model = Order
+        fields = ['positions']
 
 class OrderPositionsSerializer(serializers.ModelSerializer):
     # класс для сериализации товара в заказе + расчитываемое поле - общая стоимость товара
@@ -22,6 +29,11 @@ class OrderPositionsSerializer(serializers.ModelSerializer):
     def get_total(self, obj):
         return obj.quantity * obj.good.price
 
+class BasketSerializer1(serializers.ModelSerializer):
+    positions = OrderPositionsSerializer(many=True)
+    class Meta:
+        model = Order
+        fields = ['positions']
 
 class BasketSerializer(serializers.ModelSerializer):
     # модель сериализатора для корзины и заказа
