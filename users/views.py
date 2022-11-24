@@ -1,5 +1,6 @@
 from authemail.models import SignupCode, send_multi_format_email
 from django.conf import settings
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
@@ -29,9 +30,9 @@ class RegisterApiView(APIView):
 
         if not must_validate_email:
             user.is_verified = True
-            send_multi_format_email('welcome_email',
-                                    {'email': user.email, },
-                                    target_email=user.email)
+            # send_multi_format_email('welcome_email',
+            #                         {'email': user.email, },
+            #                         target_email=user.email)
             user.save()
 
         if must_validate_email:
@@ -46,6 +47,7 @@ class RegisterApiView(APIView):
 class UserDetailChangeAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     serializer_class = UserSerializer
+    http_method_names = ['get', 'put', 'delete']
     def get_object(self):
         obj = self.request.user
         return obj
@@ -58,10 +60,27 @@ class UserDetailChangeAPIView(RetrieveUpdateDestroyAPIView):
         token.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
+@extend_schema_view(
+    list=extend_schema(
+        description='Get contacts list',
+        summary='Contacts list'),
+    create=extend_schema(
+        description='Create new contact object',
+        summary='Create contact'),
+    destroy=extend_schema(
+        description='Delete contact',
+        summary='Delete contact'),
+    update=extend_schema(
+            description='Update contact instance',
+            summary='Update contact'),
+    retrieve=extend_schema(
+            description='Get contact detail',
+            summary='Contact detail'),
+)
 class ContactViewSet(ModelViewSet):
     serializer_class = ContactSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    http_method_names = ['get', 'put', 'delete', 'post']
 
     def get_queryset(self):
         queryset = Contact.objects.filter(user=self.request.user)
@@ -74,10 +93,28 @@ class ContactViewSet(ModelViewSet):
         return super().create(request, *args, **kwargs)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        description='Retrieve companies list',
+        summary='Companies list'),
+    create=extend_schema(
+        description='Create new company',
+        summary='Create company'),
+    destroy=extend_schema(
+        description='Delete company',
+        summary='Delete company'),
+    update=extend_schema(
+            description='Update company instance',
+            summary='Update company'),
+    retrieve=extend_schema(
+            description='Get company object detail',
+            summary='Company detail'),
+)
 class CompanyViewSet(ModelViewSet):
     serializer_class = CompanySerializer
     permission_classes = [IsAuthenticatedOrReadOnly, CompanyOwnerPermission]
     queryset = Company.objects.all()
+    http_method_names = ['get', 'put', 'delete', 'post']
 
     def create(self, request, *args, **kwargs):
         user = self.request.user

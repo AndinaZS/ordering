@@ -1,18 +1,18 @@
 from django.db.models import Prefetch
-from drf_spectacular.utils import extend_schema
-from rest_framework import status
+from drf_spectacular.utils import extend_schema, inline_serializer
+from rest_framework import status, serializers
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, DestroyAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from orders.models import Order, OrderPositions
 from orders.service import send_order_message, false_positions
-from orders.serializers import BasketSerializer, BasketSerializer1, GoodSerializer1
+from orders.serializers import BasketSerializer, BasketCreateSerializer
 from users.models import Contact
 
 
-class BasketView(ListCreateAPIView):
+class BasketView(ListCreateAPIView, DestroyAPIView):
     # класс для работы с корзиной
     serializer_class = BasketSerializer
     queryset = Order.objects.all()
@@ -23,9 +23,17 @@ class BasketView(ListCreateAPIView):
         return Order.objects.filter(customer=user, state='basket')
 
     @extend_schema(
-        request=BasketSerializer1,
         responses=BasketSerializer,
-        description="Creates an authenticated user's basket or updates if the basket exists",
+        description="Return an authenticated user's basket",
+        summary='Get basket'
+    )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    @extend_schema(
+        request=BasketCreateSerializer,
+        responses=BasketSerializer,
+        description="Create an authenticated user's basket or updates if the basket exists",
         summary='Create basket'
     )
     def post(self, request, *args, **kwargs):
@@ -35,7 +43,7 @@ class BasketView(ListCreateAPIView):
         return self.create(request, *args, **kwargs)
 
     @extend_schema(
-        request=BasketSerializer1,
+        request=BasketCreateSerializer,
         responses=BasketSerializer,
         description="Update an authenticated user's basket",
         summary='Update basket'
@@ -44,17 +52,15 @@ class BasketView(ListCreateAPIView):
         return self.post(request, *args, **kwargs)
 
     @extend_schema(
-        request=BasketSerializer,
-        responses=BasketSerializer,
-        description="Delete goods from basket",
+        description="Delete goods from basket. Request must specify a list of goods id to delete ('positions')",
         summary='Delete goods'
     )
     def delete(self, request, *args, **kwargs):
-        positions = request.data['positions']
+        goods = request.data['goods']
         user = self.request.user
         basket = Order.objects.filter(customer=user, state='basket').first()
-        for position in positions:
-            item = basket.positions.filter(good=position).first()
+        for good in goods:
+            item = basket.positions.filter(good=good).first()
             if item:
                 item.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

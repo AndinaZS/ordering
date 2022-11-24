@@ -148,7 +148,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_THROTTLE_RATES': {
         'user': '20/minute',
-        'anone': '5/minute',
+        'anon': '5/minute',
     }
     # 'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
@@ -162,7 +162,7 @@ SPECTACULAR_SETTINGS = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
-AUTH_EMAIL_VERIFICATION = True
+AUTH_EMAIL_VERIFICATION = False
 
 EMAIL_USE_TLS = env('EMAIL_USE_TLS')
 EMAIL_HOST = env('EMAIL_HOST')

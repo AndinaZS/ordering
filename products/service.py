@@ -9,6 +9,7 @@ class ProductFilter(FilterSet):
     #фильтр списка товаров по категории и по диапазону цены
     category = CharFilter(field_name='category__name', lookup_expr='icontains')
     price = RangeFilter(field_name='goods__price')
+    shop = CharFilter(field_name='goods__shop')
 
     class Meta:
         model = Product
