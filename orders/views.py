@@ -1,4 +1,5 @@
 from django.db.models import Prefetch
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListCreateAPIView
@@ -21,15 +22,31 @@ class BasketView(ListCreateAPIView):
         user = self.request.user
         return Order.objects.filter(customer=user, state='basket')
 
+    @extend_schema(
+        request=BasketSerializer,
+        responses=BasketSerializer,
+        description="Creates an authenticated user's basket or updates if the basket exists",
+        summary='Create basket'
+    )
     def post(self, request, *args, **kwargs):
         user = self.request.user
         request.data['state'] = 'basket'
         request.data['customer'] = user.id
         return self.create(request, *args, **kwargs)
 
+    @extend_schema(
+        request=BasketSerializer,
+        responses=BasketSerializer,
+        description="Update an authenticated user's basket",
+        summary='Update basket'
+    )
     def put(self, request, *args, **kwargs):
         return self.post(request, *args, **kwargs)
 
+    @extend_schema(
+        description="Delete goods from basket",
+        summary='Delete goods'
+    )
     def delete(self, request, *args, **kwargs):
         positions = request.data['positions']
         user = self.request.user

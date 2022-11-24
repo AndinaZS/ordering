@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'users',
     'products',
     'orders',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -85,13 +86,16 @@ WSGI_APPLICATION = 'ordering.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DB_NAME'),
-        'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASSWORD'),
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',}
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': env('DB_NAME'),
+    #     'USER': env('DB_USER'),
+    #     'PASSWORD': env('DB_PASSWORD'),
+    #     'HOST': 'localhost',
+    #     'PORT': '5432',
+    # }
 }
 
 # Password validation
@@ -135,7 +139,15 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     # 'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Ordering API',
+    'DESCRIPTION': 'Netology final project: API for placing goods and making orders',
+    'VERSION': '1.0',
+
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
