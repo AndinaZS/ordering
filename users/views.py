@@ -26,20 +26,6 @@ class RegisterApiView(APIView):
         serializer_obj.is_valid(raise_exception=True)
         user = serializer_obj.save()
 
-        must_validate_email = getattr(settings, "AUTH_EMAIL_VERIFICATION", True)
-
-        if not must_validate_email:
-            user.is_verified = True
-            # send_multi_format_email('welcome_email',
-            #                         {'email': user.email, },
-            #                         target_email=user.email)
-            user.save()
-
-        if must_validate_email:
-            ipaddr = self.request.META.get('REMOTE_ADDR', '0.0.0.0')
-            signup_code = SignupCode.objects.create_signup_code(user, ipaddr)
-            signup_code.send_signup_email()
-
         content = {'content': f'User {user.username} has been created.'}
         return Response(content, status=status.HTTP_201_CREATED)
 

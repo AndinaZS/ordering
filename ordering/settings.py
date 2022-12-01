@@ -41,14 +41,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'rest_framework',
     'rest_framework.authtoken',
-    'authemail',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.vk',
+    'allauth.socialaccount.providers.google',
     'django_filters',
     'users',
     'products',
     'orders',
     'drf_spectacular',
+    'authemail',
+
 ]
 
 MIDDLEWARE = [
@@ -71,9 +79,9 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.request'
             ],
         },
     },
@@ -135,9 +143,15 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
+AUTH_USER_MODEL = 'users.User'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication'
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
@@ -150,8 +164,11 @@ REST_FRAMEWORK = {
         'user': '20/minute',
         'anon': '5/minute',
     }
-    # 'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+
 }
+
+#drf-spectacular settings
+#https://drf-spectacular.readthedocs.io/en/latest/index.html
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Ordering API',
@@ -160,9 +177,9 @@ SPECTACULAR_SETTINGS = {
 
 }
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-AUTH_USER_MODEL = 'users.User'
-AUTH_EMAIL_VERIFICATION = False
+#django-rest-authemail settings
+#https://pypi.org/project/django-rest-authemail/
+AUTH_EMAIL_VERIFICATION = True
 
 EMAIL_USE_TLS = env('EMAIL_USE_TLS')
 EMAIL_HOST = env('EMAIL_HOST')
@@ -174,3 +191,36 @@ EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 DEFAULT_FROM_EMAIL = env('EMAIL_FROM')
 
 ADMINS = [('admin', env('ADMIN_EMAIL'))]
+
+
+#allauth settings
+#https://django-allauth.readthedocs.io/en/latest/installation.html
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SITE_ID = 1
+
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': '123',
+            'secret': '456',
+            'key': ''
+        }
+    },
+    'vk': {
+        'APP': {
+            'client_id': env('VK_CLIENT_ID'),
+            'secret': env('VK_SECRET_KEY'),
+        },
+        "SCOPE": [
+            "email",]
+    }
+}
+
+LOGIN_REDIRECT_URL = "/api/v1/users/me/"

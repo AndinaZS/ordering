@@ -23,6 +23,7 @@ urlpatterns = [
     path('logout/', Logout.as_view()),
     path('password/reset/', PasswordReset.as_view()),
     path('password/reset/verify/', PasswordResetVerify.as_view()),
+    path('', include('allauth.urls')),
     # path('password/reset/verified/', PasswordResetVerified.as_view()),
     path('users/me/', UserDetailChangeAPIView.as_view()),
     path('users/me/', include(contact.urls)),
