@@ -15,7 +15,7 @@ class CompanySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Company
-        fields = '__all__'
+        fields = ['id', 'title', 'ITN', 'website', 'ready_to_order']
 
     def is_valid(self, *, raise_exception=False):
         self.user = self.initial_data.get('user')

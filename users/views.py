@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
 from users.models import Contact, Company
-from users.permissions import CompanyOwnerPermission, IsOwnerOrReadOnly
+from users.permissions import CompanyOwnerPermission, IsOwnerOrReadOnly, UserOrReadOnly
 from users.serializers import UserSerializer, ContactSerializer, CompanySerializer
 
 
@@ -31,7 +31,7 @@ class RegisterApiView(APIView):
 
 
 class UserDetailChangeAPIView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, UserOrReadOnly]
     serializer_class = UserSerializer
     http_method_names = ['get', 'put', 'delete']
     def get_object(self):
@@ -73,7 +73,7 @@ class ContactViewSet(ModelViewSet):
         return queryset
 
     def create(self, request, *args, **kwargs):
-        print(request.data)
+        request.data._mutable = True
         user = self.request.user
         request.data['user'] = user.id
         return super().create(request, *args, **kwargs)
@@ -104,6 +104,7 @@ class CompanyViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         user = self.request.user
+        request.data._mutable = True
         request.data['user'] = user
         return super().create(request, *args, **kwargs)
 

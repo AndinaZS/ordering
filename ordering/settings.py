@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+
     'rest_framework',
     'rest_framework.authtoken',
 
@@ -50,13 +51,16 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.vk',
     'allauth.socialaccount.providers.google',
+
+    'authemail',
+
     'django_filters',
+
     'users',
     'products',
     'orders',
-    'drf_spectacular',
-    'authemail',
 
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -95,7 +99,7 @@ WSGI_APPLICATION = 'ordering.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',}
+        'NAME': BASE_DIR / 'db.sqlite3', }
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
     #     'NAME': env('DB_NAME'),
@@ -167,8 +171,8 @@ REST_FRAMEWORK = {
 
 }
 
-#drf-spectacular settings
-#https://drf-spectacular.readthedocs.io/en/latest/index.html
+# drf-spectacular settings
+# https://drf-spectacular.readthedocs.io/en/latest/index.html
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Ordering API',
@@ -177,8 +181,8 @@ SPECTACULAR_SETTINGS = {
 
 }
 
-#django-rest-authemail settings
-#https://pypi.org/project/django-rest-authemail/
+# django-rest-authemail settings
+# https://pypi.org/project/django-rest-authemail/
 AUTH_EMAIL_VERIFICATION = True
 
 EMAIL_USE_TLS = env('EMAIL_USE_TLS')
@@ -192,9 +196,8 @@ DEFAULT_FROM_EMAIL = env('EMAIL_FROM')
 
 ADMINS = [('admin', env('ADMIN_EMAIL'))]
 
-
-#allauth settings
-#https://django-allauth.readthedocs.io/en/latest/installation.html
+# allauth settings
+# https://django-allauth.readthedocs.io/en/latest/installation.html
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
@@ -208,18 +211,21 @@ SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
-            'client_id': '123',
-            'secret': '456',
-            'key': ''
-        }
+            'client_id': env('GOOGLE_CLIENT_ID'),
+            'secret': env('GOOGLE_SECRET_KEY'),
+        },
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
     },
     'vk': {
         'APP': {
             'client_id': env('VK_CLIENT_ID'),
             'secret': env('VK_SECRET_KEY'),
         },
-        "SCOPE": [
-            "email",]
+        'SCOPE': [
+            'email', ]
     }
 }
 
