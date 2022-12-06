@@ -3,7 +3,8 @@ from authemail.views import (SignupVerify,
                              PasswordReset,
                              PasswordResetVerify,
                              PasswordResetVerified)
-from django.urls import path, include
+from django.urls import path, include, re_path
+from drf_spectacular.extensions import OpenApiAuthenticationExtension
 
 from users.views import (RegisterApiView,
                          ContactViewSet,
@@ -23,10 +24,10 @@ urlpatterns = [
     path('logout/', Logout.as_view()),
     path('password/reset/', PasswordReset.as_view()),
     path('password/reset/verify/', PasswordResetVerify.as_view()),
-    path('', include('allauth.urls')),
-    # path('password/reset/verified/', PasswordResetVerified.as_view()),
+    re_path('', include('social_django.urls', namespace='social')),
     path('users/me/', UserDetailChangeAPIView.as_view()),
     path('users/me/', include(contact.urls)),
     path('', include(company.urls)),
 
 ]
+

@@ -46,10 +46,10 @@ class UserSerializer(serializers.ModelSerializer):
         return super().is_valid(raise_exception=raise_exception)
 
     def create(self, validated_data):
-        contacts_data = validated_data.pop('contacts') if validated_data.get('contacts') else []
+        # contacts_data = validated_data.pop('contacts') if validated_data.get('contacts') else []
         user = User(**validated_data)
         user.set_password(self.password)
         user.save()
-        for contact_data in contacts_data:
-            Contact.objects.create(user=user, **contact_data)
+        # for contact_data in contacts_data:
+        #     Contact.objects.create(user=user, **contact_data)
         return user

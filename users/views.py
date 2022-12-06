@@ -1,5 +1,3 @@
-from authemail.models import SignupCode, send_multi_format_email
-from django.conf import settings
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -25,7 +23,6 @@ class RegisterApiView(APIView):
         serializer_obj = self.serializer_class(data=request.data)
         serializer_obj.is_valid(raise_exception=True)
         user = serializer_obj.save()
-
         content = {'content': f'User {user.username} has been created.'}
         return Response(content, status=status.HTTP_201_CREATED)
 
@@ -107,4 +104,3 @@ class CompanyViewSet(ModelViewSet):
         request.data._mutable = True
         request.data['user'] = user
         return super().create(request, *args, **kwargs)
-
