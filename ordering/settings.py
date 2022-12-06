@@ -204,7 +204,8 @@ ADMINS = [('admin', env('ADMIN_EMAIL'))]
 # https://python-social-auth.readthedocs.io/en/latest/configuration/django.html
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'social_core.backends.vk.VKOAuth2'
+    'social_core.backends.vk.VKOAuth2',
+    'social_core.backends.google.GoogleOAuth2'
 ]
 
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
@@ -223,7 +224,9 @@ SOCIAL_AUTH_PIPELINE = (
 
 SOCIAL_AUTH_VK_OAUTH2_KEY = env('VK_CLIENT_ID')
 SOCIAL_AUTH_VK_OAUTH2_SECRET = env('VK_SECRET_KEY')
-
 SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email',]
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env('GOOGLE_CLIENT_ID')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env('GOOGLE_SECRET_KEY')
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/api/v1/users/me/"
