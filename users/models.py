@@ -35,6 +35,9 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', ]
 
+    def set_verified(self):
+        self.is_verified = True
+
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
 

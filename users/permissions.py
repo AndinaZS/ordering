@@ -7,7 +7,7 @@ class CompanyOwnerPermission(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        return request.user in obj.user.all()
+        return request.user in obj.user.all() and request.user.is_verified
 
 
 class UserOrReadOnly(permissions.BasePermission):

@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from orders.models import Order, OrderPositions
+from orders.permissions import IsVerified
 from orders.service import send_order_message, false_positions
 from orders.serializers import BasketSerializer, BasketCreateSerializer
 from users.models import Contact
@@ -16,7 +17,7 @@ class BasketView(ListCreateAPIView, DestroyAPIView):
     # класс для работы с корзиной
     serializer_class = BasketSerializer
     queryset = Order.objects.all()
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,IsVerified,)
 
     def get_queryset(self):
         user = self.request.user

@@ -4,7 +4,7 @@ from authemail.views import (SignupVerify,
                              PasswordResetVerify,
                              PasswordResetVerified)
 from django.urls import path, include, re_path
-from drf_spectacular.extensions import OpenApiAuthenticationExtension
+
 
 from users.views import (RegisterApiView,
                          ContactViewSet,

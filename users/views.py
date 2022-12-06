@@ -8,6 +8,7 @@ from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
+from ordering import settings
 from users.models import Contact, Company
 from users.permissions import CompanyOwnerPermission, IsOwnerOrReadOnly, UserOrReadOnly
 from users.serializers import UserSerializer, ContactSerializer, CompanySerializer
@@ -23,6 +24,9 @@ class RegisterApiView(APIView):
         serializer_obj = self.serializer_class(data=request.data)
         serializer_obj.is_valid(raise_exception=True)
         user = serializer_obj.save()
+        if not settings.AUTH_EMAIL_VERIFICATION:
+            user.set_verified()
+            user.save()
         content = {'content': f'User {user.username} has been created.'}
         return Response(content, status=status.HTTP_201_CREATED)
 
@@ -70,7 +74,6 @@ class ContactViewSet(ModelViewSet):
         return queryset
 
     def create(self, request, *args, **kwargs):
-        request.data._mutable = True
         user = self.request.user
         request.data['user'] = user.id
         return super().create(request, *args, **kwargs)

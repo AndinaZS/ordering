@@ -154,7 +154,10 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
     ],
+    'TEST_REQUEST_JSON_FORMAT': 'json',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
@@ -187,7 +190,7 @@ SPECTACULAR_SETTINGS = {
 
 # django-rest-authemail settings
 # https://pypi.org/project/django-rest-authemail/
-AUTH_EMAIL_VERIFICATION = True
+AUTH_EMAIL_VERIFICATION = False
 
 EMAIL_USE_TLS = env('EMAIL_USE_TLS')
 EMAIL_HOST = env('EMAIL_HOST')
