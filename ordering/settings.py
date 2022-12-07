@@ -190,7 +190,7 @@ SPECTACULAR_SETTINGS = {
 
 # django-rest-authemail settings
 # https://pypi.org/project/django-rest-authemail/
-AUTH_EMAIL_VERIFICATION = False
+AUTH_EMAIL_VERIFICATION = True
 
 EMAIL_USE_TLS = env('EMAIL_USE_TLS')
 EMAIL_HOST = env('EMAIL_HOST')

@@ -1,17 +1,21 @@
 import factory.django
+from django.conf import settings
+from django.contrib.auth.hashers import make_password
 
 from users.models import User, Contact
 
 
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = User
+        model = settings.AUTH_USER_MODEL
 
     username = 'test'
     email = 'test@test.net'
-    password = 'testpassword'
-    password_confirmed = password,
+    password = make_password('123')
     is_verified = True
+    first_name = 'test'
+    last_name = 'test'
+
 
 class ContactFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -23,5 +27,3 @@ class ContactFactory(factory.django.DjangoModelFactory):
     building = '55'
     phone = '+128594789'
     user = factory.SubFactory(UserFactory)
-
-

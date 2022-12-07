@@ -67,7 +67,7 @@ class UserDetailChangeAPIView(RetrieveUpdateDestroyAPIView):
 class ContactViewSet(ModelViewSet):
     serializer_class = ContactSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
-    http_method_names = ['get', 'put', 'delete', 'post']
+    http_method_names = ['get', 'patch', 'delete', 'post']
 
     def get_queryset(self):
         queryset = Contact.objects.filter(user=self.request.user)

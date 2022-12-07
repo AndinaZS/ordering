@@ -32,6 +32,7 @@ def test_get_user(client, token):
     assert response.status_code == 200
     assert response.data == UserSerializer(user).data
 
+
 @pytest.mark.django_db
 def test_update_user(client, token):
     data = {
@@ -39,20 +40,34 @@ def test_update_user(client, token):
         'type': 'customer'
     }
     response = client.patch('/api/v1/users/me/',
-                          data,
-                          content_type='application/json',
-                          HTTP_AUTHORIZATION='Token ' + token)
+                            data,
+                            content_type='application/json',
+                            HTTP_AUTHORIZATION='Token ' + token)
     user = User.objects.get(pk=Token.objects.get(key=token).user_id)
     assert response.status_code == 200
     assert user.first_name == 'NewFirstname'
     assert user.type == 'customer'
 
+
 @pytest.mark.django_db
 def test_delete_user(client, token):
     id = Token.objects.get(key=token).user_id
     response = client.delete('/api/v1/users/me/',
-                          HTTP_AUTHORIZATION='Token ' + token)
+                             HTTP_AUTHORIZATION='Token ' + token)
 
     assert response.status_code == 204
     assert not Token.objects.filter(key=token)
     assert User.objects.get(pk=id).is_active == False
+
+
+@pytest.mark.django_db
+def test_login_user(client, user):
+
+    response = client.post(
+        '/api/v1/login/',
+        {'email': 'test@test.net',
+         'password': '123'}
+    )
+
+    assert response.status_code == 200
+    assert response.data['token']
