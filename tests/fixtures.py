@@ -7,7 +7,7 @@ def token(client, django_user_model):
     username = 'test2'
     password = 'password'
     email = '1@1.ru'
-    first_name = 'Firtname'
+    first_name = 'Firstname'
     last_name ='Lastname'
 
     django_user_model.objects.create_user(

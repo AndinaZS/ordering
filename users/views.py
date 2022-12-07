@@ -34,7 +34,7 @@ class RegisterApiView(APIView):
 class UserDetailChangeAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly, UserOrReadOnly]
     serializer_class = UserSerializer
-    http_method_names = ['get', 'put', 'delete']
+    http_method_names = ['get', 'patch', 'delete']
     def get_object(self):
         obj = self.request.user
         return obj
@@ -75,6 +75,7 @@ class ContactViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         user = self.request.user
+        request.data._mutable = True
         request.data['user'] = user.id
         return super().create(request, *args, **kwargs)
 
@@ -104,6 +105,6 @@ class CompanyViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         user = self.request.user
-        request.data._mutable = True
+        # request.data._mutable = True
         request.data['user'] = user
         return super().create(request, *args, **kwargs)
