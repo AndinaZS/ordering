@@ -2,19 +2,29 @@ import factory.django
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 
-from users.models import User, Contact
+from users.models import User, Contact, Company
+
+
+class CompanyFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Company
+
+    title = factory.Faker('company')
+    ITN = factory.Faker('random_int')
+    ready_to_order = True
 
 
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = settings.AUTH_USER_MODEL
 
-    username = 'test'
-    email = 'test@test.net'
-    password = make_password('123')
+    username = factory.Faker('name')
+    email = factory.Faker('email')
+    password = make_password('testpassword')
     is_verified = True
-    first_name = 'test'
-    last_name = 'test'
+    first_name = factory.Faker('first_name')
+    last_name = factory.Faker('last_name')
+    company = factory.SubFactory(CompanyFactory)
 
 
 class ContactFactory(factory.django.DjangoModelFactory):
@@ -27,3 +37,4 @@ class ContactFactory(factory.django.DjangoModelFactory):
     building = '55'
     phone = '+128594789'
     user = factory.SubFactory(UserFactory)
+

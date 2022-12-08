@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
+from social_django.models import UserSocialAuth
 
 from ordering import settings
 from users.models import Contact, Company
@@ -24,9 +25,6 @@ class RegisterApiView(APIView):
         serializer_obj = self.serializer_class(data=request.data)
         serializer_obj.is_valid(raise_exception=True)
         user = serializer_obj.save()
-        if not settings.AUTH_EMAIL_VERIFICATION:
-            user.set_verified()
-            user.save()
         content = {'content': f'User {user.username} has been created.'}
         return Response(content, status=status.HTTP_201_CREATED)
 
@@ -42,9 +40,11 @@ class UserDetailChangeAPIView(RetrieveUpdateDestroyAPIView):
     def delete(self, request, *args, **kwargs):
         user = self.get_object()
         user.is_active = False
+        user.is_verified = False
         user.save()
-        token = Token.objects.get(user=user)
-        token.delete()
+        token = Token.objects.filter(user=user).first()
+        if token:
+            token.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 @extend_schema_view(
@@ -75,8 +75,9 @@ class ContactViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         user = self.request.user
-        request.data._mutable = True
+        request.POST._mutable = True
         request.data['user'] = user.id
+        request.POST._mutable = False
         return super().create(request, *args, **kwargs)
 
 
@@ -101,10 +102,11 @@ class CompanyViewSet(ModelViewSet):
     serializer_class = CompanySerializer
     permission_classes = [IsAuthenticatedOrReadOnly, CompanyOwnerPermission]
     queryset = Company.objects.all()
-    http_method_names = ['get', 'put', 'delete', 'post']
+    http_method_names = ['get', 'patch', 'delete', 'post']
 
     def create(self, request, *args, **kwargs):
         user = self.request.user
-        # request.data._mutable = True
+        request.POST._mutable = True
         request.data['user'] = user
+        request.POST._mutable = False
         return super().create(request, *args, **kwargs)

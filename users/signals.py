@@ -9,9 +9,10 @@ from django.dispatch import receiver
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def send_verified_email(sender, instance, created, **kwargs):
     if created:
-        must_validate_email = getattr(settings, "AUTH_EMAIL_VERIFICATION", True)
-
-        if must_validate_email:
+        if settings.AUTH_EMAIL_VERIFICATION:
             ipaddr = f'{randint(0, 255)}.{randint(0, 255)}.{randint(0, 255)}.{randint(0, 255)}'
             signup_code = SignupCode.objects.create_signup_code(instance, ipaddr)
             signup_code.send_signup_email()
+        else:
+            instance.set_verified()
+            instance.save()

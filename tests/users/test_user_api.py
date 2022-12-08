@@ -54,20 +54,9 @@ def test_delete_user(client, token):
     id = Token.objects.get(key=token).user_id
     response = client.delete('/api/v1/users/me/',
                              HTTP_AUTHORIZATION='Token ' + token)
-
+    user = User.objects.get(pk=id)
     assert response.status_code == 204
     assert not Token.objects.filter(key=token)
-    assert User.objects.get(pk=id).is_active == False
+    assert user.is_active == False
+    assert user.is_verified == False
 
-
-@pytest.mark.django_db
-def test_login_user(client, user):
-
-    response = client.post(
-        '/api/v1/login/',
-        {'email': 'test@test.net',
-         'password': '123'}
-    )
-
-    assert response.status_code == 200
-    assert response.data['token']

@@ -20,7 +20,7 @@ class User(AbstractUser):
     password_confirmed = models.CharField(max_length=50,
                                           null=True, default=None,
                                           verbose_name='Подтверждение пароля')
-    company = models.ForeignKey('Company', related_name='user',
+    company = models.ForeignKey('Company', related_name='users',
                                 default=None, null=True, on_delete=models.SET_NULL,
                                 verbose_name='Компания')
     is_active = models.BooleanField(default=True)
@@ -44,7 +44,6 @@ class User(AbstractUser):
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Список пользователей"
-        ordering = ('username',)
 
 
 class Company(models.Model):
@@ -59,7 +58,6 @@ class Company(models.Model):
     class Meta:
         verbose_name = "Компания"
         verbose_name_plural = "Список компаний"
-        ordering = ('title',)
 
 
 class Contact(models.Model):
@@ -81,5 +79,5 @@ class Contact(models.Model):
         verbose_name = 'Контакты пользователя'
         verbose_name_plural = "Список контактов пользователя"
 
-    # def __str__(self):
-    #     return f'{self.city} {self.street} {self.building}'
+    def __str__(self):
+        return f'{self.city} {self.street} {self.building}'

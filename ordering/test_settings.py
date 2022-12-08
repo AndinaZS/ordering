@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 import environ
 
+from ordering import settings
+
 env = environ.Env(
     DEBUG=(bool, False)
 )
@@ -34,29 +36,7 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.sites',
-
-    'rest_framework',
-    'rest_framework.authtoken',
-
-    'social_django',
-    'authemail',
-
-    'django_filters',
-
-    'users',
-    'products',
-    'orders',
-
-    'drf_spectacular',
-]
+INSTALLED_APPS = settings.INSTALLED_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -110,20 +90,8 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+AUTH_PASSWORD_VALIDATORS = settings.AUTH_PASSWORD_VALIDATORS
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
@@ -144,7 +112,7 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = settings.AUTH_USER_MODEL
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -166,24 +134,6 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 5,
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.UserRateThrottle',
-        'rest_framework.throttling.AnonRateThrottle',
-    ],
-    'DEFAULT_THROTTLE_RATES': {
-        'user': '20/minute',
-        'anon': '5/minute',
-    }
-
-}
-
-# drf-spectacular settings
-# https://drf-spectacular.readthedocs.io/en/latest/index.html
-
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'Ordering API',
-    'DESCRIPTION': 'Netology final project: API for placing goods and making orders',
-    'VERSION': '1.0',
 
 }
 
@@ -192,44 +142,4 @@ SPECTACULAR_SETTINGS = {
 # https://pypi.org/project/django-rest-authemail/
 AUTH_EMAIL_VERIFICATION = False
 
-EMAIL_USE_TLS = env('EMAIL_USE_TLS')
-EMAIL_HOST = env('EMAIL_HOST')
-EMAIL_FROM = env('EMAIL_FROM')
-EMAIL_BCC = env('EMAIL_BCC')
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
-EMAIL_PORT = env('EMAIL_PORT')
-EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-DEFAULT_FROM_EMAIL = env('EMAIL_FROM')
 
-ADMINS = [('admin', env('ADMIN_EMAIL'))]
-
-# python-social-auth settings
-# https://python-social-auth.readthedocs.io/en/latest/configuration/django.html
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'social_core.backends.vk.VKOAuth2',
-    'social_core.backends.google.GoogleOAuth2'
-]
-
-SOCIAL_AUTH_JSONFIELD_ENABLED = True
-
-SOCIAL_AUTH_PIPELINE = (
-    'social_core.pipeline.social_auth.social_details',
-    'social_core.pipeline.social_auth.social_uid',
-    'social_core.pipeline.social_auth.social_user',
-    'social_core.pipeline.user.get_username',
-    'social_core.pipeline.social_auth.associate_by_email',
-    'social_core.pipeline.user.create_user',
-    'social_core.pipeline.social_auth.associate_user',
-    'social_core.pipeline.social_auth.load_extra_data',
-    'social_core.pipeline.user.user_details',
-)
-
-SOCIAL_AUTH_VK_OAUTH2_KEY = env('VK_CLIENT_ID')
-SOCIAL_AUTH_VK_OAUTH2_SECRET = env('VK_SECRET_KEY')
-SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email',]
-
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env('GOOGLE_CLIENT_ID')
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env('GOOGLE_SECRET_KEY')
-
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/api/v1/users/me/"
