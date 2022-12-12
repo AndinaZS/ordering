@@ -1,8 +1,6 @@
 import factory.django
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
-
-from products.models import Category
 from users.models import Contact, Company
 
 
@@ -41,10 +39,3 @@ class ContactFactory(factory.django.DjangoModelFactory):
     phone = '+128594789'
     user = factory.SubFactory(UserFactory)
 
-
-# для приложения products
-class CategoryFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Category
-
-    name = 'смартфоны'
