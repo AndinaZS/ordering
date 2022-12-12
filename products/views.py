@@ -1,6 +1,7 @@
 from django.db.models import Prefetch
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
+from rest_framework.filters import OrderingFilter
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -13,9 +14,10 @@ from products.serializers import ProductListSerializer, GoodsCreateSerializer
 class ProductListAPIView(ListAPIView):
     #только get, добавление товаров через загрузку прайса
     serializer_class = ProductListSerializer
-    queryset = Product.objects.all()
-    filter_backends = (DjangoFilterBackend, )
+    queryset = Product.objects.prefetch_related('goods').select_related('company')
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_class = ProductFilter
+    ordering_fields = ('goods__price', 'name')
 
     def get_queryset(self):
         queryset = Product.objects.prefetch_related(

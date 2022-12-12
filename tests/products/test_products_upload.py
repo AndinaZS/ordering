@@ -4,7 +4,7 @@ from rest_framework.authtoken.models import Token
 from products.models import ProductItem
 from users.models import User
 
-
+#тест загрузки прайса
 @pytest.mark.django_db
 def test_products_upload(client, token, company):
     user = User.objects.get(pk=Token.objects.get(key=token).user_id)
