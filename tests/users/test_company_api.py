@@ -1,12 +1,14 @@
 import pytest
+from rest_framework.authtoken.models import Token
 
-from tests.factories import CompanyFactory
-from users.models import Company
+from tests.factories import CompanyFactory, UserFactory
+from users.models import Company, User
 from users.serializers import CompanySerializer
 
 
 @pytest.mark.django_db
 def test_create_company(client, token):
+
     expected_response = {
         'id': 1,
         'title': 'mycompany',
@@ -24,9 +26,11 @@ def test_create_company(client, token):
         data,
         HTTP_AUTHORIZATION='Token ' + token,
     )
+    user = User.objects.get(pk=Token.objects.get(key=token).user_id)
     assert response.status_code == 201
     assert response.data == expected_response
     assert Company.objects.count() == 1
+    assert user.company_id == 1
 
 
 @pytest.mark.django_db
@@ -35,7 +39,6 @@ def test_get_company(client):
     expected_response = CompanySerializer(companies, many=True).data
     response = client.get('/api/v1/company/')
 
-
     assert Company.objects.count() == 5
     assert response.status_code == 200
     assert response.data['results'] == expected_response
@@ -43,6 +46,9 @@ def test_get_company(client):
 
 @pytest.mark.django_db
 def test_update_company(client, token, company):
+    user = User.objects.get(pk=Token.objects.get(key=token).user_id)
+    user.company = company
+    user.save()
     data = {
         'title': 'NewTitle',
         'website': 'https://company.site'
@@ -58,11 +64,4 @@ def test_update_company(client, token, company):
     assert result_obj.title == 'NewTitle'
     assert result_obj.website == 'https://company.site'
 
-@pytest.mark.django_db
-def test_delete_company(client, token, company):
-    response = client.delete(f'/api/v1/company/{company.id}/',
-                             content_type='application/json',
-                             HTTP_AUTHORIZATION='Token ' + token
-                             )
-    assert response.status_code == 204
-    assert not Company.objects.filter(pk=company.id)
+

@@ -2,17 +2,11 @@ import factory.django
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 
-from users.models import User, Contact, Company
+from products.models import Category
+from users.models import Contact, Company
 
 
-class CompanyFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Company
-
-    title = factory.Faker('company')
-    ITN = factory.Faker('random_int')
-    ready_to_order = True
-
+# для приложения users
 
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -24,7 +18,16 @@ class UserFactory(factory.django.DjangoModelFactory):
     is_verified = True
     first_name = factory.Faker('first_name')
     last_name = factory.Faker('last_name')
-    company = factory.SubFactory(CompanyFactory)
+
+class CompanyFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Company
+
+    title = factory.Faker('company')
+    ITN = factory.Faker('random_int')
+    ready_to_order = True
+    # users = factory.RelatedFactory(UserFactory,
+    #                                factory_related_name='user')
 
 
 class ContactFactory(factory.django.DjangoModelFactory):
@@ -38,3 +41,10 @@ class ContactFactory(factory.django.DjangoModelFactory):
     phone = '+128594789'
     user = factory.SubFactory(UserFactory)
 
+
+# для приложения products
+class CategoryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Category
+
+    name = 'смартфоны'
