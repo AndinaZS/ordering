@@ -12,18 +12,18 @@ from social_django.models import UserSocialAuth
 from ordering import settings
 from users.models import Contact, Company
 from users.permissions import CompanyOwnerPermission, IsOwnerOrReadOnly, UserOrReadOnly
-from users.serializers import UserSerializer, ContactSerializer, CompanySerializer
+from users.serializers import UserSerializer, ContactSerializer, CompanySerializer, UserCreateSerializer
 
 
 @extend_schema(
-    request=UserSerializer,
+    request=UserCreateSerializer,
     responses={201: OpenApiResponse(description='User username has been created.')},
     description="Create new user. If AUTH_EMAIL_VERIFICATION=True, user.is_verified=False",
     summary='Create user'
 )
 class RegisterApiView(APIView):
     permission_classes = (AllowAny,)
-    serializer_class = UserSerializer
+    serializer_class = UserCreateSerializer
 
     def post(self, request):
         if request.data['password'] != request.data.get('password_confirmed'):

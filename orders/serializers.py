@@ -22,14 +22,6 @@ class OrderPositionsSerializer(serializers.ModelSerializer):
         return obj.quantity * obj.good.price
 
 
-class BasketCreateSerializer(serializers.ModelSerializer):
-    positions = OrderPositionsSerializer(many=True)
-
-    class Meta:
-        model = Order
-        fields = ['positions']
-
-
 class BasketSerializer(serializers.ModelSerializer):
     # модель сериализатора для корзины и заказа
     positions = OrderPositionsSerializer(many=True)
@@ -58,16 +50,4 @@ class BasketSerializer(serializers.ModelSerializer):
                                               order=order)
         return order
 
-# class OrderSerializer(serializers.ModelSerializer):
-#     positions = OrderPositionsSerializer(many=True)
-#
-#     class Meta:
-#         model = Order
-#         fields = ['id', 'customer', 'state', 'positions', 'contact']
 
-# def update(self, instanse, validated_data):
-#     order, _ = Order.objects.get(customer=validated_data['customer'], state='basket')
-#     order.cintact = validated_data['contact']
-#     order.state = 'new'
-#
-#     return order

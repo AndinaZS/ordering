@@ -192,15 +192,14 @@ SPECTACULAR_SETTINGS = {
         <li>password/reset/,</li> 
         <li>password/reset/verify/ </li>
         </ul>
-        are from <a href=https://pypi.org/project/django-rest-authemail/>django-rest-authemail</a>
-        
+        are from <a href=https://pypi.org/project/django-rest-authemail/>django-rest-authemail</a>      
         <h4>Social-auth paths:</h4>
         <ul>
         <li>/login/vk-oauth2/ - for VK</li>
         <li>/login/google-oauth2/ - for gmail account.</li>
         </ul>
-        are using <a href=https://python-social-auth.readthedocs.io/en/latest/configuration/django.html>
-        python-social-auth</a>
+        are using 
+        <a href=https://python-social-auth.readthedocs.io/en/latest/configuration/django.html>python-social-auth</a>
     """,
     'VERSION': '1.0',
 

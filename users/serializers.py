@@ -23,7 +23,19 @@ class ContactSerializer(serializers.ModelSerializer):
         model = Contact
         fields = '__all__'
 
-
+@extend_schema_serializer(
+    examples=[
+        OpenApiExample(
+            'Valid example',
+            value={
+                'title': 'MyCompany',
+                'ITN': 1234564,
+                'ready_to_order': True,
+                'website': 'http://mysite.com',
+                }
+        )
+    ]
+)
 class CompanySerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
@@ -57,28 +69,36 @@ class CompanySerializer(serializers.ModelSerializer):
         )
     ]
 )
-class UserSerializer(serializers.ModelSerializer):
-    company = serializers.SlugRelatedField(
-        required=False,
-        queryset=Company.objects.all(),
-        slug_field='ITN'
-    )
-
-    contacts = ContactSerializer(many=True, required=False)
+class UserCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 'type', 'company', 'contacts']
+        fields = ['username', 'email', 'first_name', 'last_name', 'type']
 
     def is_valid(self, *, raise_exception=False):
         self.password = self.initial_data.get('password')
         return super().is_valid(raise_exception=raise_exception)
 
     def create(self, validated_data):
-        # contacts_data = validated_data.pop('contacts') if validated_data.get('contacts') else []
         user = User(**validated_data)
         user.set_password(self.password)
         user.save()
-        # for contact_data in contacts_data:
-        #     Contact.objects.create(user=user, **contact_data)
         return user
+
+
+class UserSerializer(serializers.ModelSerializer):
+    company = serializers.SlugRelatedField(
+        required=False,
+        read_only=True,
+        slug_field='ITN'
+    )
+
+    contacts = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        required=False,
+        slug_field='id')
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'type', 'company', 'contacts']

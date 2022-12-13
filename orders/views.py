@@ -1,6 +1,6 @@
 from django.db.models import Prefetch
-from drf_spectacular.utils import extend_schema, inline_serializer
-from rest_framework import status, serializers
+from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListCreateAPIView, DestroyAPIView
 from rest_framework.response import Response
@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from orders.models import Order, OrderPositions
 from orders.permissions import IsVerified
 from orders.service import send_order_message, false_positions
-from orders.serializers import BasketSerializer, BasketCreateSerializer
+from orders.serializers import BasketSerializer
 from users.models import Contact
 
 
@@ -17,7 +17,7 @@ class BasketView(ListCreateAPIView, DestroyAPIView):
     # класс для работы с корзиной
     serializer_class = BasketSerializer
     queryset = Order.objects.all()
-    permission_classes = (IsAuthenticated,IsVerified,)
+    permission_classes = (IsAuthenticated, IsVerified,)
 
     def get_queryset(self):
         user = self.request.user
@@ -32,7 +32,15 @@ class BasketView(ListCreateAPIView, DestroyAPIView):
         return self.list(request, *args, **kwargs)
 
     @extend_schema(
-        request=BasketCreateSerializer,
+        examples=[OpenApiExample(
+            name='Valid example',
+            value={"positions": [
+                {"quantity": 7,
+                 "good": 3},
+                {"quantity": 10,
+                 "good": 2}
+            ]},
+            request_only=True)],
         responses=BasketSerializer,
         description="Create an authenticated user's basket or updates if the basket exists",
         summary='Create basket'
@@ -44,7 +52,13 @@ class BasketView(ListCreateAPIView, DestroyAPIView):
         return self.create(request, *args, **kwargs)
 
     @extend_schema(
-        request=BasketCreateSerializer,
+        examples=[OpenApiExample(
+            name='Valid example',
+            value={"positions": [
+                {"quantity": 5,
+                 "good": 1},
+            ]},
+            request_only=True)],
         responses=BasketSerializer,
         description="Update an authenticated user's basket",
         summary='Update basket'
@@ -53,7 +67,9 @@ class BasketView(ListCreateAPIView, DestroyAPIView):
         return self.post(request, *args, **kwargs)
 
     @extend_schema(
-        description="Delete goods from basket. Request must specify a list of goods id to delete ('positions')",
+        description='''Delete goods from basket. 
+        Request must specify a list of goods id to delete. 
+        Example {"goods": [1, 2]}. Can't be tested here''',
         summary='Delete goods'
     )
     def delete(self, request, *args, **kwargs):
@@ -67,8 +83,23 @@ class BasketView(ListCreateAPIView, DestroyAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@extend_schema_view(
+    post=extend_schema(
+        request='',
+        examples=[OpenApiExample(
+            name='Valid example',
+            value={"contact": 1},
+            request_only=True)],
+        responses=BasketSerializer,
+        description="Create an order from basket",
+        summary='Create order'),
+    get=extend_schema(
+        responses=BasketSerializer,
+        description="Return all user's orders (including those where he is a seller ). Authorised is required",
+        summary='Get orders'
+    ))
 class OrderView(APIView):
-    #класс для работы с заказом. доступны только создание заказа и просмотр.
+    # класс для работы с заказом. доступны только создание заказа и просмотр.
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
@@ -87,12 +118,10 @@ class OrderView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request, *args, **kwargs):
-        #отдаеет заказы в которых user является покупателем или продавцом(в этом случае фильтр по позициям)
+        # отдаеет заказы в которых user является покупателем или продавцом(в этом случае фильтр по позициям)
         user = self.request.user
         if user.type == 'customer':
             orders = Order.objects.filter(customer=self.request.user).exclude(state='basket')
-
-
         else:
             orders = Order.objects.prefetch_related(
                 Prefetch(

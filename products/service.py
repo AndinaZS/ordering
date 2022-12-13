@@ -13,7 +13,7 @@ class ProductFilter(FilterSet):
 
     class Meta:
         model = Product
-        fields = ['category', 'goods']
+        fields = ['category', 'goods', 'shop']
 
 
 def get_data(request, serializer_class):
