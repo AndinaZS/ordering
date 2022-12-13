@@ -7,9 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
-from social_django.models import UserSocialAuth
 
-from ordering import settings
 from users.models import Contact, Company
 from users.permissions import CompanyOwnerPermission, IsOwnerOrReadOnly, UserOrReadOnly
 from users.serializers import UserSerializer, ContactSerializer, CompanySerializer, UserCreateSerializer

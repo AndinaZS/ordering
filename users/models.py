@@ -1,12 +1,11 @@
-
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 
-
 USER_TYPE_CHOICES = (
     ('seller', 'Продавец'),
     ('customer', 'Покупатель'),)
+
 
 class User(AbstractUser):
     username_validator = UnicodeUsernameValidator()
@@ -70,7 +69,7 @@ class Contact(models.Model):
     region = models.CharField(max_length=15, blank=True, verbose_name='Регион/область')
     city = models.CharField(max_length=50, verbose_name='Населенный пункт')
     street = models.CharField(max_length=100, verbose_name='Улица')
-    building = models.CharField(max_length=5,verbose_name='Дом/здание')
+    building = models.CharField(max_length=5, verbose_name='Дом/здание')
     apartment = models.CharField(max_length=15, blank=True, verbose_name='Помещение')
     additional_info = models.CharField(max_length=255,
                                        blank=True, null=True,

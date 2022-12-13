@@ -34,8 +34,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
         return super().is_valid(raise_exception=raise_exception)
 
     def create(self, validated_data):
-        #создает товар и при необходимости категорию и свойство. по API не доступна
-        #только через GoodsCreateSerializer при загрузки прайса
+        """creates a product and, if necessary, a category and a property."""
         product = super().create(validated_data)
         category, _ = Category.objects.get_or_create(name=self.category)
         product.category = category
@@ -62,7 +61,7 @@ class ProductListSerializer(serializers.ModelSerializer):
 
 
 class GoodsCreateSerializer(serializers.ModelSerializer):
-    #сериализация связки товар-магазин
+
     class Meta:
         model = ProductItem
         fields = '__all__'

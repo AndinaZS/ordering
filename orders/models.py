@@ -15,7 +15,7 @@ STATE_CHOICES = (
     )
 
 class Order(models.Model):
-    # модель заказа
+
     state = models.CharField(choices=STATE_CHOICES, max_length=14, verbose_name='Статус заказа')
     customer = models.ForeignKey(AUTH_USER_MODEL,
                                  related_name='orders',
@@ -33,7 +33,7 @@ class Order(models.Model):
 
 
 class OrderPositions(models.Model):
-    # модель для свзяи товара и заказа
+    # for m2m relation between Order and Product
     order = models.ForeignKey(Order, on_delete=models.CASCADE,
                               related_name='positions',
                               verbose_name='Заказ')

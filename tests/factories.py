@@ -5,7 +5,6 @@ from users.models import Contact, Company
 
 
 # для приложения users
-
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = settings.AUTH_USER_MODEL

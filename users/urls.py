@@ -2,7 +2,7 @@ from authemail.views import (SignupVerify,
                              Login, Logout,
                              PasswordReset,
                              PasswordResetVerify,
-                             PasswordResetVerified)
+                             )
 from django.urls import path, include, re_path
 
 

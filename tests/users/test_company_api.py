@@ -1,7 +1,7 @@
 import pytest
 from rest_framework.authtoken.models import Token
 
-from tests.factories import CompanyFactory, UserFactory
+from tests.factories import CompanyFactory
 from users.models import Company, User
 from users.serializers import CompanySerializer
 

@@ -21,7 +21,7 @@ from products.serializers import ProductListSerializer, GoodsCreateSerializer
         description='Retrieve products list',
         summary='Products list'))
 class ProductListAPIView(ListAPIView):
-    '''Retrieve goods list. The list can be filtered by price rate, category, shop and ordered by price and name.'''
+    """Retrieves goods list. The list can be filtered by price rate, category, shop and ordered by price and name."""
     serializer_class = ProductListSerializer
     queryset = Product.objects.prefetch_related('goods').select_related('company')
     filter_backends = (DjangoFilterBackend, OrderingFilter)
@@ -48,8 +48,8 @@ class ProductListAPIView(ListAPIView):
         Only for authorised users with type=seller and have company ''ready_to_order""",
         summary='Upload products list'))
 class ProductCreateAPIView(APIView):
-    '''Allowed to upload a price. The user is required to be authorized, have type=seller
-    and their company is ready_to_order. Request data has to contain link to the price list.'''
+    """Allows to upload a price. The user is required to be authorized, have type=seller
+    and their company is ready_to_order. Request data has to contain link to the price list."""
     serializer_class = GoodsCreateSerializer
 
     def post(self, request):

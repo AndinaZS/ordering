@@ -184,7 +184,7 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'Ordering API',
     'DESCRIPTION':
         """<h2>Netology final project: API for placing goods and making orders.</h2>       
-        <h4>Endpoints: </h4>
+        <h4>Paths: </h4>
         <ul>
         <li>signup/verify/,</li> 
         <li>login/,</li> 
@@ -192,13 +192,13 @@ SPECTACULAR_SETTINGS = {
         <li>password/reset/,</li> 
         <li>password/reset/verify/ </li>
         </ul>
-        are from <a href=https://pypi.org/project/django-rest-authemail/>django-rest-authemail</a>      
-        <h4>Social-auth paths:</h4>
+        use the library <a href=https://pypi.org/project/django-rest-authemail/>django-rest-authemail</a>      
+        <h4>Social auth:</h4>
         <ul>
         <li>/login/vk-oauth2/ - for VK</li>
         <li>/login/google-oauth2/ - for gmail account.</li>
         </ul>
-        are using 
+        get from 
         <a href=https://python-social-auth.readthedocs.io/en/latest/configuration/django.html>python-social-auth</a>
     """,
     'VERSION': '1.0',

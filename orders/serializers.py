@@ -10,7 +10,9 @@ class ProductItemSerializer(serializers.ModelSerializer):
 
 
 class OrderPositionsSerializer(serializers.ModelSerializer):
-    # класс для сериализации товара в заказе + расчитываемое поле - общая стоимость товара
+    """ the class for serializing products in the order.
+    'total' is additional calculated field as total cost of the product
+    """
     total = serializers.SerializerMethodField()
     good = serializers.PrimaryKeyRelatedField(queryset=ProductItem.objects.all())
 
@@ -23,7 +25,7 @@ class OrderPositionsSerializer(serializers.ModelSerializer):
 
 
 class BasketSerializer(serializers.ModelSerializer):
-    # модель сериализатора для корзины и заказа
+    """This Serializer is used for Basket and Order"""
     positions = OrderPositionsSerializer(many=True)
 
     class Meta:
@@ -31,7 +33,7 @@ class BasketSerializer(serializers.ModelSerializer):
         fields = ['id', 'customer', 'positions', 'state']
 
     def create(self, validated_data):
-        # создаем заказ (Order) и и связь заказа с товаром (OrderPositions)
+        """function response to create Orders connect them with OrderPositions"""
 
         positions = validated_data.pop('positions')
         order, _ = Order.objects.get_or_create(customer=validated_data['customer'], state='basket')

@@ -7,8 +7,8 @@ from django.dispatch import receiver
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def send_verified_email(sender, instance, created, **kwargs):
-    """This function execute when new user is created.
-     In case AUTH_EMAIL_VERIFICATION == True it send email with a code for user email verification
+    """This function executes when new user is created.
+     In case AUTH_EMAIL_VERIFICATION == True it sends email with a code for user email verification
      (using module django-rest-authemail)
      If not AUTH_EMAIL_VERIFICATION, itset automatically user.is_verified=True"""
     if created:

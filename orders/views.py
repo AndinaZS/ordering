@@ -14,7 +14,7 @@ from users.models import Contact
 
 
 class BasketView(ListCreateAPIView, DestroyAPIView):
-    # класс для работы с корзиной
+    """class for CRUD Basket."""
     serializer_class = BasketSerializer
     queryset = Order.objects.all()
     permission_classes = (IsAuthenticated, IsVerified,)
@@ -85,11 +85,11 @@ class BasketView(ListCreateAPIView, DestroyAPIView):
 
 @extend_schema_view(
     post=extend_schema(
-        request='',
         examples=[OpenApiExample(
             name='Valid example',
             value={"contact": 1},
             request_only=True)],
+        request='',
         responses=BasketSerializer,
         description="Create an order from basket",
         summary='Create order'),
@@ -99,10 +99,12 @@ class BasketView(ListCreateAPIView, DestroyAPIView):
         summary='Get orders'
     ))
 class OrderView(APIView):
-    # класс для работы с заказом. доступны только создание заказа и просмотр.
+
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
+        """when user adds contact to their basket,
+        it changes order status to new and send messages admin and user"""
         positions = list(Order.objects.get(customer=self.request.user, state='basket').positions.all())
         res = false_positions(positions)
         if res:
@@ -118,7 +120,8 @@ class OrderView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request, *args, **kwargs):
-        # отдаеет заказы в которых user является покупателем или продавцом(в этом случае фильтр по позициям)
+        """return a list of user orders (for seller and customer)
+        For seller get list orders, filtered by company"""
         user = self.request.user
         if user.type == 'customer':
             orders = Order.objects.filter(customer=self.request.user).exclude(state='basket')
