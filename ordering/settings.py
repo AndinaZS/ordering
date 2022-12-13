@@ -182,7 +182,26 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Ordering API',
-    'DESCRIPTION': 'Netology final project: API for placing goods and making orders',
+    'DESCRIPTION':
+        """<h2>Netology final project: API for placing goods and making orders.</h2>       
+        <h4>Endpoints: </h4>
+        <ul>
+        <li>signup/verify/,</li> 
+        <li>login/,</li> 
+        <li>logout/,</li> 
+        <li>password/reset/,</li> 
+        <li>password/reset/verify/ </li>
+        </ul>
+        are from <a href=https://pypi.org/project/django-rest-authemail/>django-rest-authemail</a>
+        
+        <h4>Social-auth paths:</h4>
+        <ul>
+        <li>/login/vk-oauth2/ - for VK</li>
+        <li>/login/google-oauth2/ - for gmail account.</li>
+        </ul>
+        are using <a href=https://python-social-auth.readthedocs.io/en/latest/configuration/django.html>
+        python-social-auth</a>
+    """,
     'VERSION': '1.0',
 
 }

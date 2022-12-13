@@ -17,7 +17,7 @@ class ProductFilter(FilterSet):
 
 
 def get_data(request, serializer_class):
-    #обработка позиций товара из прайса
+    #обработка позиций товара из прайса.
     shop = request.user.company
     url = request.data.get('url')
     price = get(url).content

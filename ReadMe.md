@@ -42,6 +42,4 @@ python manage.py createsuperuser
 python3 manage.py runserver
 
 
-[Примеры запросов Postman](https://documenter.getpostman.com/view/18527099/2s8YmKTk21)
-
 **API документация доступна по ссылке:** http://127.0.0.1:8000/api/v1/schema/swagger-ui/

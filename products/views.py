@@ -1,18 +1,22 @@
 from django.db.models import Prefetch
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from products.models import Product, ProductItem
 from products.service import get_data, ProductFilter
 from products.serializers import ProductListSerializer, GoodsCreateSerializer
 
 
+@extend_schema_view(
+    list=extend_schema(
+        description='Retrieve products list',
+        summary='Products list'))
 class ProductListAPIView(ListAPIView):
-    #только get, добавление товаров через загрузку прайса
+    #полученеи списка товаров
     serializer_class = ProductListSerializer
     queryset = Product.objects.prefetch_related('goods').select_related('company')
     filter_backends = (DjangoFilterBackend, OrderingFilter)
@@ -26,7 +30,10 @@ class ProductListAPIView(ListAPIView):
                 'shop').filter(
                 shop__ready_to_order=True))).filter(companies__ready_to_order=True)
         return queryset
-
+@extend_schema_view(
+    create=extend_schema(
+        description='Upload products list. ',
+        summary='Products list'))
 class ProductCreateAPIView(APIView):
     #обрабатывает загруженный прайс
     serializer_class = GoodsCreateSerializer

@@ -1,7 +1,7 @@
-from drf_spectacular.utils import extend_schema_view, extend_schema
+from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiResponse
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
@@ -15,6 +15,12 @@ from users.permissions import CompanyOwnerPermission, IsOwnerOrReadOnly, UserOrR
 from users.serializers import UserSerializer, ContactSerializer, CompanySerializer
 
 
+@extend_schema(
+    request=UserSerializer,
+    responses={201: OpenApiResponse(description='User username has been created.')},
+    description="Create new user. If AUTH_EMAIL_VERIFICATION=True, user.is_verified=False",
+    summary='Create user'
+)
 class RegisterApiView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = UserSerializer
@@ -29,8 +35,19 @@ class RegisterApiView(APIView):
         return Response(content, status=status.HTTP_201_CREATED)
 
 
+@extend_schema_view(
+    get=extend_schema(
+        description='Get user detail. Authentication is required',
+        summary='User detail'),
+    delete=extend_schema(
+        description="Delete user (set user.is_active=False, delete user's token).Authentication is required.",
+        summary='Delete user'),
+    patch=extend_schema(
+            description='Change user data. Authentication is required',
+            summary='Update user'),
+)
 class UserDetailChangeAPIView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly, UserOrReadOnly]
+    permission_classes = [IsAuthenticated, UserOrReadOnly]
     serializer_class = UserSerializer
     http_method_names = ['get', 'patch', 'delete']
     def get_object(self):
@@ -49,24 +66,24 @@ class UserDetailChangeAPIView(RetrieveUpdateDestroyAPIView):
 
 @extend_schema_view(
     list=extend_schema(
-        description='Get contacts list',
+        description="Return user's contacts. Authentication is required.",
         summary='Contacts list'),
     create=extend_schema(
-        description='Create new contact object',
+        description='Create new contact object. Authentication is required.',
         summary='Create contact'),
     destroy=extend_schema(
-        description='Delete contact',
+        description='Delete contact. Authentication is required.',
         summary='Delete contact'),
-    update=extend_schema(
-            description='Update contact instance',
+    partial_update=extend_schema(
+            description='Update contact instance. Authentication is required.',
             summary='Update contact'),
     retrieve=extend_schema(
-            description='Get contact detail',
+            description='Get contact detail. Authentication is required.',
             summary='Contact detail'),
 )
 class ContactViewSet(ModelViewSet):
     serializer_class = ContactSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
     http_method_names = ['get', 'patch', 'delete', 'post']
 
     def get_queryset(self):
@@ -86,13 +103,13 @@ class ContactViewSet(ModelViewSet):
         description='Retrieve companies list',
         summary='Companies list'),
     create=extend_schema(
-        description='Create new company',
+        description='Create new company. Authentication is required.',
         summary='Create company'),
     destroy=extend_schema(
-        description='Delete company',
+        description='Delete company. Authentication is required.',
         summary='Delete company'),
-    update=extend_schema(
-            description='Update company instance',
+    partial_update=extend_schema(
+            description='Update company instance. Authentication is required.',
             summary='Update company'),
     retrieve=extend_schema(
             description='Get company object detail',

@@ -1,7 +1,21 @@
+from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 from rest_framework import serializers
 from users.models import Contact, User, Company
 
 
+@extend_schema_serializer(
+    examples=[
+        OpenApiExample(
+            'Valid example',
+            value={
+                'postcode': 202020,
+                'city': 'Cherepovets',
+                'street': 'Mira',
+                'building': '55',
+                'phone': '+128594789'}
+        )
+    ]
+)
 class ContactSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
 
@@ -28,6 +42,21 @@ class CompanySerializer(serializers.ModelSerializer):
         return new_company
 
 
+@extend_schema_serializer(
+    exclude_fields=('id', 'company', 'contacts'),
+    examples=[
+        OpenApiExample(
+            'Valid example',
+            value={
+                'username': 'testuser',
+                'password': 'password1',
+                'password_confirmed': 'password1',
+                'email': 'example@example.com',
+                'first_name': 'First',
+                'last_name': 'Last'}
+        )
+    ]
+)
 class UserSerializer(serializers.ModelSerializer):
     company = serializers.SlugRelatedField(
         required=False,
